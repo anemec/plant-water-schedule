@@ -1,54 +1,76 @@
 # 🌱 Planty Care
 
-A friendly web app to track your plant watering schedules, set reminders, and
-keep a history of every watering. Built as a static site so it runs entirely in
-your browser and deploys to **GitHub Pages** with no backend needed.
+A friendly app to track plant watering schedules, set reminders, and keep a
+history of every watering. Built as a fast, accessible single-page app and
+deployed to **GitHub Pages**.
+
+![Tech](https://img.shields.io/badge/React-19-149eca) ![Tech](https://img.shields.io/badge/TypeScript-strict-3178c6) ![Tech](https://img.shields.io/badge/Tailwind-v4-38bdf8) ![Tests](https://img.shields.io/badge/tests-Vitest-6da744)
 
 ## Features
 
-- **My Plants** — see every plant with a photo, when it was last watered, and a
-  clear status badge (water today / overdue / water in N days). Plants are
-  sorted with the most urgent first.
-- **Quick add** from a built-in list: Pothos, Sansevieria, Bird of Paradise,
-  and Monstera — each with a sensible default watering interval.
-- **Look up & add new plants** — search any plant by name and the app fetches a
-  photo and description from the **Wikipedia REST API** (no API key required,
-  CORS-friendly, works on GitHub Pages).
-- **Reminders** — pick the days of the week and a time for each plant. With
-  notifications enabled, the app shows a desktop notification when it's time to
-  water (keep the page open to receive alerts).
-- **Watering history** — a running log of everything you've watered and when.
-- **Easy to read** — large high-contrast text, big buttons, generous tap
-  targets, and an **A+** toggle for extra-large text for low vision.
+- **My Plants** — every plant with a photo, watering status (water today /
+  overdue / water in N days), last-watered time, and reminder summary. Sorted
+  most-urgent first.
+- **Quick add** built-ins: Pothos, Sansevieria, Bird of Paradise, Monstera.
+- **Look up new plants** — search any plant and pull a photo + description from
+  the **Wikipedia REST API** (no API key, CORS-friendly → works on static
+  hosting).
+- **Reminders** — pick weekdays + a time per plant; browser notifications fire
+  while the page is open.
+- **History** — a running, human-friendly log of every watering.
+- **Accessible & mobile-first** — large, high-contrast type; an **A+** toggle
+  for extra-large text; thumb-friendly bottom navigation; safe-area aware; full
+  keyboard focus styling; respects reduced motion.
 
-All data is stored locally in your browser (`localStorage`); nothing is sent to
-a server.
+All data lives in your browser (`localStorage`); nothing is sent to a server.
 
-## Run locally
+## Tech stack
 
-It's a plain static site — just open `index.html`, or serve the folder:
+| Concern | Choice |
+| --- | --- |
+| Build / dev | **Vite 7** |
+| UI | **React 19** + **TypeScript** (strict) |
+| Styling | **Tailwind CSS v4** (design tokens via `@theme`) |
+| Tests | **Vitest** + **React Testing Library** (jsdom) |
+| Linting | **ESLint 9** (flat config) + typescript-eslint |
+
+### Architecture
+
+```
+src/
+  lib/         pure logic — watering math, storage, Wikipedia client,
+               notifications, formatting (heavily unit-tested)
+  hooks/       usePlants (state + persistence), useReminders, useTextSize
+  components/  presentational + feature components (ui/ holds primitives)
+  data/        preset plants
+  types.ts     shared domain types
+```
+
+The domain logic is split into small pure functions so it can be tested without
+a DOM, and React components stay thin.
+
+## Develop
 
 ```bash
-python3 -m http.server 8000
-# then visit http://localhost:8000
+npm install
+npm run dev        # start the dev server
+npm test           # run the test suite
+npm run lint       # lint
+npm run build      # type-check + production build → dist/
 ```
 
 ## Deploy to GitHub Pages
 
-A workflow at `.github/workflows/deploy-pages.yml` deploys the site
-automatically on every push to `main`. To enable it once:
+`.github/workflows/deploy-pages.yml` runs the tests, builds with the correct
+base path (`/plant-water-schedule/`), and deploys on every push to `main`.
+Enable it once under **Settings → Pages → Source: GitHub Actions**. The app
+then lives at `https://<username>.github.io/plant-water-schedule/`.
 
-1. Go to **Settings → Pages**.
-2. Under **Build and deployment → Source**, choose **GitHub Actions**.
-3. Push to `main` (or run the workflow manually). Your app will be live at
-   `https://<your-username>.github.io/plant-water-schedule/`.
-
-## Tech
-
-Vanilla HTML, CSS, and JavaScript — no build step, no dependencies.
+> The Vite `base` is only applied when the `GITHUB_PAGES` env var is set (done
+> in CI), so local dev still serves from `/`.
 
 ## Notes on reminders
 
-Browser notifications fire while the page is open in a tab. For always-on
-reminders you'd need a Service Worker with the Push API and a push server, which
-is out of scope for a pure static GitHub Pages app.
+Browser notifications fire only while the page is open. Always-on reminders
+would need a Service Worker + Push API and a push server — out of scope for a
+pure static site.

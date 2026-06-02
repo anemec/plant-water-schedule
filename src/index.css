@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+/* ===========================================================
+   Planty Care — design tokens (Tailwind v4 @theme)
+   Dark, accessible palette: deep lush greens on elevated
+   neutral surfaces, with a single emerald accent + water-blue
+   and clear state colors. Large, friendly typography.
+   =========================================================== */
+@theme {
+  --font-sans: "Nunito", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    sans-serif;
+
+  /* Surfaces */
+  --color-canvas: #0b1410;
+  --color-surface: #14201a;
+  --color-surface-2: #1b2c22;
+  --color-line: #294034;
+
+  /* Text */
+  --color-ink: #e9f2ec;
+  --color-muted: #9fb6a8;
+
+  /* Brand + accents */
+  --color-brand: #34d399;
+  --color-brand-strong: #10b981;
+  --color-brand-deep: #065f46;
+  --color-water: #38bdf8;
+  --color-water-strong: #0ea5e9;
+
+  /* States */
+  --color-danger: #f87171;
+  --color-warning: #fbbf24;
+
+  --radius-xl2: 1.25rem;
+}
+
+/* ----- Base ----- */
+html {
+  color-scheme: dark;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* Large by default for easy reading; bumped by the A+ toggle. */
+  font-size: 18px;
+}
+html.text-xl-mode {
+  font-size: 21px;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  background:
+    radial-gradient(
+      1200px 600px at 100% -10%,
+      color-mix(in oklab, var(--color-brand-deep) 35%, transparent),
+      transparent
+    ),
+    radial-gradient(
+      900px 500px at -10% 110%,
+      color-mix(in oklab, var(--color-water-strong) 16%, transparent),
+      transparent
+    ),
+    var(--color-canvas);
+  background-attachment: fixed;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: color-mix(in oklab, var(--color-brand) 25%, transparent);
+}
+
+/* Visible, consistent focus ring for keyboard users. */
+:focus-visible {
+  outline: 3px solid var(--color-water);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Safe-area helpers (notches / home indicator). */
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
