@@ -5,7 +5,12 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist", "coverage"] },
+  { ignores: ["dist", "coverage", "playwright-report", "test-results"] },
+  // Node-context config + E2E files.
+  {
+    files: ["*.config.{ts,js}", "e2e/**/*.ts"],
+    languageOptions: { globals: globals.node },
+  },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],
