@@ -1,23 +1,18 @@
 @import "tailwindcss";
 
 /* ===========================================================
-   Planty Care — accessible design system
-   Built for a single user with glaucoma:
-   - Dual theme (dark default), switchable at runtime via
-     [data-theme] on <html>.
-   - AAA contrast (>= 7:1). Status uses color + icon + word.
-   - Large, bold Atkinson Hyperlegible type to keep text crisp
-     and reduce halation of light-on-dark text.
-   - Single, centered column; strong focus; no glare (off-black
-     / off-white surfaces rather than pure #000 / #fff).
+   Planty Care — "Conservatory" design system
+   Warm botanical theme. Built for a low-vision (glaucoma) user:
+   AAA contrast (>=7:1), large type, dark default + light, with
+   trendy depth/texture/motion applied surgically so text always
+   sits on solid, high-contrast surfaces.
    =========================================================== */
 
-/* Map Tailwind color utilities to runtime CSS variables.
-   @theme inline => utilities reference var(--c-*), so flipping
-   [data-theme] re-themes the whole app instantly. */
 @theme inline {
   --font-sans: "Atkinson Hyperlegible", ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", sans-serif;
+  /* Editorial display serif for large headings only. */
+  --font-display: "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
 
   --color-canvas: var(--c-canvas);
   --color-surface: var(--c-surface);
@@ -28,64 +23,66 @@
 
   --color-brand: var(--c-brand);
   --color-on-brand: var(--c-on-brand);
+  --color-accent: var(--c-accent);
+  --color-on-accent: var(--c-on-accent);
   --color-water: var(--c-water);
   --color-on-water: var(--c-on-water);
   --color-danger: var(--c-danger);
   --color-on-danger: var(--c-on-danger);
-  --color-warning: var(--c-warning);
   --color-focus: var(--c-focus);
 
   --radius-xl2: 1.25rem;
+  --radius-3xl: 1.75rem;
 }
 
-/* ----- Dark theme (default) -----
-   Off-black canvas; near-white text. High contrast is kept;
-   halation is handled by large/bold type, not by dimming text. */
+/* ----- Dark theme (default): warm near-black greenhouse ----- */
 :root,
 :root[data-theme="dark"] {
-  --c-canvas: #14191b;
-  --c-surface: #1f292c;
-  --c-surface-2: #2a3740;
-  --c-line: #3f525a;
-  --c-ink: #f4f8f5; /* ~15:1 on canvas */
-  --c-ink-soft: #cdd8d6; /* still >= 7:1 on canvas */
+  --c-canvas: #12180f;
+  --c-surface: #1c2616;
+  --c-surface-2: #26331d;
+  --c-line: #3a4a2e;
+  --c-ink: #f2f5ea;
+  --c-ink-soft: #cbd6bb;
 
-  --c-brand: #5fdc97; /* bright green for fills + icons */
-  --c-on-brand: #06231a; /* dark text on brand */
-  --c-water: #56c8f5;
-  --c-on-water: #03212e;
-  --c-danger: #ff9a8f;
+  --c-brand: #6cc06c; /* leaf green (fills) */
+  --c-on-brand: #0c1f0c;
+  --c-accent: #e2a05a; /* terracotta (fills/borders only) */
+  --c-on-accent: #2a1606;
+  --c-water: #5bb8e6;
+  --c-on-water: #04222e;
+  --c-danger: #f0907f;
   --c-on-danger: #340a06;
-  --c-warning: #ffce5c;
-  --c-focus: #ffd23f; /* high-visibility yellow ring */
+  --c-focus: #ffd23f;
 }
 
-/* ----- Light theme -----
-   Off-white canvas (less glare than pure white); near-black text.
-   Accents darkened so they keep AAA contrast on light. */
+/* ----- Light theme: warm paper ----- */
 :root[data-theme="light"] {
-  --c-canvas: #f4f4ee;
-  --c-surface: #ffffff;
-  --c-surface-2: #e9ede5;
-  --c-line: #b9c2b6;
-  --c-ink: #14181a; /* ~16:1 on canvas */
-  --c-ink-soft: #313c38; /* >= 7:1 on canvas */
+  --c-canvas: #f3efe4;
+  --c-surface: #fbf9f1;
+  --c-surface-2: #e8e1d0;
+  --c-line: #cdc4ad;
+  --c-ink: #1b2113;
+  --c-ink-soft: #434a32;
 
   --c-brand: #0f5f34;
   --c-on-brand: #ffffff;
+  --c-accent: #9a4f1f;
+  --c-on-accent: #ffffff;
   --c-water: #0a5f86;
   --c-on-water: #ffffff;
   --c-danger: #a4231b;
   --c-on-danger: #ffffff;
-  --c-warning: #6f4a00;
   --c-focus: #0b3d91;
 }
 
 /* ----- Text scale (set on <html>; remembered) ----- */
 html {
-  font-size: 20px; /* large baseline for low vision */
-  /* Keep focused content clear of the sticky nav (Focus Not Obscured). */
+  font-size: 20px;
   scroll-padding-top: 6.5rem;
+  color-scheme: dark light;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 html.scale-large {
   font-size: 24px;
@@ -94,56 +91,100 @@ html.scale-xlarge {
   font-size: 28px;
 }
 
-html {
-  color-scheme: dark light;
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-}
-
 body {
   margin: 0;
   min-height: 100svh;
-  /* Soft, low-opacity glows for depth — text always sits on solid
-     surfaces, so contrast is unaffected. */
-  background:
-    radial-gradient(
-      60rem 40rem at 110% -10%,
-      color-mix(in oklab, var(--c-brand) 16%, transparent),
-      transparent 60%
-    ),
-    radial-gradient(
-      55rem 35rem at -10% 110%,
-      color-mix(in oklab, var(--c-water) 13%, transparent),
-      transparent 60%
-    ),
-    var(--color-canvas);
-  background-attachment: fixed;
   color: var(--color-ink);
   font-family: var(--font-sans);
-  line-height: 1.6; /* generous for eye tracking */
+  line-height: 1.6;
   letter-spacing: 0.01em;
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
+  /* Warm glows + a faint grain for botanical depth. Text sits on solid
+     surface cards, so contrast is unaffected. */
+  background-color: var(--color-canvas);
+  background-image:
+    radial-gradient(
+      55rem 38rem at 108% -8%,
+      color-mix(in oklab, var(--c-brand) 18%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      48rem 32rem at -12% 108%,
+      color-mix(in oklab, var(--c-accent) 14%, transparent),
+      transparent 60%
+    ),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  background-attachment: fixed, fixed, fixed;
 }
 
-/* Strong, consistent focus ring that works on both themes. */
+/* Display headings */
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
+
 :focus-visible {
   outline: 4px solid var(--color-focus);
   outline-offset: 3px;
   border-radius: 8px;
 }
-
 ::selection {
   background: var(--color-brand);
   color: var(--color-on-brand);
 }
 
-/* Safe-area helpers (notches / home indicator). */
 @utility pt-safe {
   padding-top: env(safe-area-inset-top);
 }
 @utility pb-safe {
   padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ----- Motion (all gated by prefers-reduced-motion below) ----- */
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes pop {
+  0% {
+    transform: scale(0.9);
+  }
+  60% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-rise {
+  animation: rise 0.32s ease both;
+}
+.animate-pop {
+  animation: pop 0.4s ease both;
 }
 
 @media (prefers-reduced-motion: reduce) {

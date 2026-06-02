@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import type { CareTask, CareType, Plant, Weekday } from "../types";
 import { CARE_META, CARE_TYPES, WEEKDAY_LABELS } from "../data/presets";
 import { cn } from "../lib/util";
 import { Button } from "./ui/Button";
+import { Sheet } from "./ui/Sheet";
 
 const ALL_DAYS: Weekday[] = [0, 1, 2, 3, 4, 5, 6];
 
@@ -11,7 +12,6 @@ interface TaskDraft {
   intervalDays: number;
   lastDone: number | null;
 }
-
 type Drafts = Record<CareType, TaskDraft>;
 
 function draftsFromPlant(plant: Plant | null): Drafts {
@@ -45,28 +45,20 @@ export function ScheduleDialog({
     reminderTime: string;
   }) => void;
 }) {
-  const dialogRef = useRef<HTMLDialogElement>(null);
   const [drafts, setDrafts] = useState<Drafts>(() => draftsFromPlant(null));
   const [days, setDays] = useState<Weekday[]>([]);
   const [time, setTime] = useState("09:00");
 
   useEffect(() => {
-    const el = dialogRef.current;
-    if (!el) return;
-    if (plant) {
-      setDrafts(draftsFromPlant(plant));
-      setDays(plant.reminderDays);
-      setTime(plant.reminderTime);
-      if (!el.open) el.showModal();
-    } else if (el.open) {
-      el.close();
-    }
+    if (!plant) return;
+    setDrafts(draftsFromPlant(plant));
+    setDays(plant.reminderDays);
+    setTime(plant.reminderTime);
   }, [plant]);
 
   function setDraft(type: CareType, patch: Partial<TaskDraft>) {
     setDrafts((d) => ({ ...d, [type]: { ...d[type], ...patch } }));
   }
-
   function toggleDay(day: Weekday) {
     setDays((prev) =>
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
@@ -80,7 +72,10 @@ export function ScheduleDialog({
         const iv = drafts[t].intervalDays;
         return {
           type: t,
-          intervalDays: Number.isFinite(iv) && iv >= 1 && iv <= 365 ? Math.round(iv) : CARE_META[t].defaultInterval,
+          intervalDays:
+            Number.isFinite(iv) && iv >= 1 && iv <= 365
+              ? Math.round(iv)
+              : CARE_META[t].defaultInterval,
           lastDone: drafts[t].lastDone,
         };
       },
@@ -93,17 +88,13 @@ export function ScheduleDialog({
   }
 
   return (
-    <dialog
-      ref={dialogRef}
+    <Sheet
+      open={plant != null}
       onClose={onClose}
-      aria-labelledby="schedule-title"
-      className={cn(
-        "m-auto max-h-[90vh] w-[92%] max-w-lg overflow-auto rounded-xl2 border-2 border-line bg-surface p-6 text-ink",
-        "backdrop:bg-black/70",
-      )}
+      ariaLabel={plant ? `Care for ${plant.name}` : "Care schedule"}
     >
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-        <h2 id="schedule-title" className="text-2xl font-bold">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5 p-6">
+        <h2 className="font-display text-3xl font-semibold">
           {plant ? `Care for ${plant.name}` : "Care schedule"}
         </h2>
 
@@ -194,6 +185,6 @@ export function ScheduleDialog({
           </Button>
         </div>
       </form>
-    </dialog>
+    </Sheet>
   );
 }

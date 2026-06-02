@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import type { PlantActions } from "../hooks/usePlants";
 import {
   getFeatured,
@@ -9,6 +9,8 @@ import {
 import { showToast } from "../lib/toast";
 import { PlantAutocomplete } from "./PlantAutocomplete";
 import { Button } from "./ui/Button";
+import { Sheet } from "./ui/Sheet";
+import { ScreenHeader } from "./ui/ScreenHeader";
 
 export function ExploreView({ actions }: { actions: PlantActions }) {
   const [featured, setFeatured] = useState<Taxon[] | null>(null);
@@ -27,12 +29,11 @@ export function ExploreView({ actions }: { actions: PlantActions }) {
 
   return (
     <section aria-label="Explore plants" className="flex flex-col gap-6">
-      <div>
-        <h2 className="text-2xl font-bold">Explore plants 🌍</h2>
-        <p className="mt-1 text-lg text-ink-soft">
-          Search the living encyclopedia, or tap a plant to learn about it.
-        </p>
-      </div>
+      <ScreenHeader
+        icon="🌍"
+        title="Explore"
+        subtitle="A living encyclopedia — search or tap to learn."
+      />
 
       <PlantAutocomplete
         placeholder="Search any plant…"
@@ -40,7 +41,7 @@ export function ExploreView({ actions }: { actions: PlantActions }) {
       />
 
       {featured === null ? (
-        <p className="text-lg text-ink-soft">🌱 Loading a few favorites…</p>
+        <p className="text-lg text-ink-soft">🌱 Gathering a few favorites…</p>
       ) : featured.length === 0 ? (
         <p className="text-lg text-ink-soft">
           Couldn’t reach the plant library — check your connection and try again.
@@ -58,12 +59,12 @@ export function ExploreView({ actions }: { actions: PlantActions }) {
             ))}
           </div>
           <p className="text-center text-sm text-ink-soft">
-            Photos &amp; data from the iNaturalist community 🐛🌿
+            Photos &amp; data from the iNaturalist community 🌿
           </p>
         </>
       )}
 
-      <DetailDialog
+      <DetailSheet
         id={selectedId}
         onClose={() => setSelectedId(null)}
         onAdd={(t) => {
@@ -88,7 +89,7 @@ function HeroCard({ taxon, onOpen }: { taxon: Taxon; onOpen: () => void }) {
     <button
       type="button"
       onClick={onOpen}
-      className="group overflow-hidden rounded-3xl border-2 border-line bg-surface text-left"
+      className="animate-rise overflow-hidden rounded-3xl border-2 border-line bg-surface text-left shadow-lg shadow-black/25 transition-transform active:scale-[0.99]"
     >
       {taxon.photo && (
         <div className="relative h-56 w-full">
@@ -97,13 +98,13 @@ function HeroCard({ taxon, onOpen }: { taxon: Taxon; onOpen: () => void }) {
             alt={`Photo of ${taxon.commonName ?? taxon.scientificName}`}
             className="h-full w-full object-cover"
           />
-          <span className="absolute left-3 top-3 rounded-full bg-brand px-3 py-1 text-base font-bold text-on-brand">
-            ✨ Featured
+          <span className="absolute left-3 top-3 rounded-full bg-accent px-3 py-1 text-base font-bold text-on-accent">
+            ✦ Featured
           </span>
         </div>
       )}
       <div className="p-5">
-        <h3 className="text-2xl font-bold leading-tight">
+        <h3 className="font-display text-2xl font-semibold leading-tight">
           {taxon.commonName ?? taxon.scientificName}
         </h3>
         {taxon.commonName && (
@@ -122,7 +123,7 @@ function GalleryCard({ taxon, onOpen }: { taxon: Taxon; onOpen: () => void }) {
     <button
       type="button"
       onClick={onOpen}
-      className="flex flex-col overflow-hidden rounded-2xl border-2 border-line bg-surface text-left"
+      className="flex flex-col overflow-hidden rounded-3xl border-2 border-line bg-surface text-left shadow-md shadow-black/20 transition-transform active:scale-[0.98]"
     >
       {taxon.photo ? (
         <img
@@ -143,7 +144,7 @@ function GalleryCard({ taxon, onOpen }: { taxon: Taxon; onOpen: () => void }) {
   );
 }
 
-function DetailDialog({
+function DetailSheet({
   id,
   onClose,
   onAdd,
@@ -152,20 +153,13 @@ function DetailDialog({
   onClose: () => void;
   onAdd: (t: TaxonDetail) => void;
 }) {
-  const dialogRef = useRef<HTMLDialogElement>(null);
   const [detail, setDetail] = useState<TaxonDetail | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const el = dialogRef.current;
-    if (!el) return;
-    if (id == null) {
-      if (el.open) el.close();
-      return;
-    }
+    if (id == null) return;
     setDetail(null);
     setLoading(true);
-    if (!el.open) el.showModal();
     let alive = true;
     void getTaxonDetail(id).then((d) => {
       if (!alive) return;
@@ -178,12 +172,7 @@ function DetailDialog({
   }, [id]);
 
   return (
-    <dialog
-      ref={dialogRef}
-      onClose={onClose}
-      aria-labelledby="explore-detail-title"
-      className="m-auto max-h-[90vh] w-[94%] max-w-lg overflow-auto rounded-xl2 border-2 border-line bg-surface p-0 text-ink backdrop:bg-black/70"
-    >
+    <Sheet open={id != null} onClose={onClose} ariaLabel="Plant details">
       {loading && <p className="p-6 text-lg text-ink-soft">🌱 Loading…</p>}
       {!loading && !detail && (
         <p className="p-6 text-lg text-ink-soft">Couldn’t load this plant.</p>
@@ -199,10 +188,7 @@ function DetailDialog({
           )}
           <div className="flex flex-col gap-3 p-6">
             <div>
-              <h2
-                id="explore-detail-title"
-                className="text-3xl font-bold leading-tight"
-              >
+              <h2 className="font-display text-3xl font-semibold leading-tight">
                 {detail.commonName ?? detail.scientificName}
               </h2>
               {detail.commonName && (
@@ -215,7 +201,6 @@ function DetailDialog({
             {detail.summary && (
               <p className="text-lg leading-relaxed">{detail.summary}</p>
             )}
-
             {detail.observations != null && (
               <p className="text-base text-ink-soft">
                 👁 {detail.observations.toLocaleString()} observations on
@@ -223,9 +208,7 @@ function DetailDialog({
               </p>
             )}
             {detail.photoAttribution && (
-              <p className="text-sm text-ink-soft">
-                📷 {detail.photoAttribution}
-              </p>
+              <p className="text-sm text-ink-soft">📷 {detail.photoAttribution}</p>
             )}
 
             <div className="mt-1 flex flex-col gap-3">
@@ -255,6 +238,6 @@ function DetailDialog({
           </div>
         </article>
       )}
-    </dialog>
+    </Sheet>
   );
 }

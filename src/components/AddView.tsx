@@ -6,6 +6,7 @@ import { showToast } from "../lib/toast";
 import { cn } from "../lib/util";
 import { Button } from "./ui/Button";
 import { PlantAutocomplete } from "./PlantAutocomplete";
+import { ScreenHeader } from "./ui/ScreenHeader";
 
 export function AddView({
   actions,
@@ -41,9 +42,15 @@ export function AddView({
 
   return (
     <section aria-label="Add a plant" className="flex flex-col gap-6">
+      <ScreenHeader
+        icon="➕"
+        title="Add a plant"
+        subtitle="From the favorites, or search for any plant."
+      />
+
       {/* Quick add */}
-      <div className="rounded-3xl border-2 border-line bg-surface p-5">
-        <h2 className="text-2xl font-bold">Quick add</h2>
+      <div className="rounded-3xl border-2 border-line bg-surface p-5 shadow-lg shadow-black/25">
+        <h2 className="font-display text-2xl font-semibold">Quick add</h2>
         <p className="mt-1 text-lg text-ink-soft">
           Pick a common houseplant to add right away.
         </p>
@@ -84,8 +91,8 @@ export function AddView({
       </div>
 
       {/* Type-ahead search */}
-      <div className="rounded-3xl border-2 border-line bg-surface p-5">
-        <h2 className="text-2xl font-bold">Search for a plant</h2>
+      <div className="rounded-3xl border-2 border-line bg-surface p-5 shadow-lg shadow-black/25">
+        <h2 className="font-display text-2xl font-semibold">Search for a plant</h2>
         <p className="mt-1 text-lg text-ink-soft">
           Start typing a name — we’ll find it, with a photo.
         </p>

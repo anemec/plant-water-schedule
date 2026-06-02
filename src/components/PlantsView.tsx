@@ -10,6 +10,8 @@ import { PlantCard } from "./PlantCard";
 import { ScheduleDialog } from "./ScheduleDialog";
 import { Button } from "./ui/Button";
 import { EmptyState } from "./ui/EmptyState";
+import { ScreenHeader } from "./ui/ScreenHeader";
+import { PottedPlant, Sprout } from "./ui/illustrations";
 
 export function PlantsView({
   plants,
@@ -35,7 +37,8 @@ export function PlantsView({
   function handleDoTask(id: string, type: CareType) {
     const plant = plants.find((p) => p.id === id);
     actions.doTask(id, type);
-    if (plant) showToast(`${CARE_META[type].verb} ${plant.name} ${CARE_META[type].emoji}`);
+    if (plant)
+      showToast(`${CARE_META[type].verb} ${plant.name} ${CARE_META[type].emoji}`);
   }
 
   function handleRemove(id: string) {
@@ -47,11 +50,16 @@ export function PlantsView({
 
   return (
     <section aria-label="My plants" className="flex flex-col gap-5">
+      <ScreenHeader
+        icon="🪴"
+        title="My plants"
+        subtitle="Tap a task when it’s done."
+      />
       <ReminderBanner permission={permission} onEnable={onEnableReminders} />
 
       {plants.length === 0 ? (
-        <EmptyState emoji="🌿" title="No plants yet">
-          Tap <strong>Add</strong> to plant your first green friend.
+        <EmptyState illustration={<Sprout />} title="No plants yet">
+          Plant your first green friend to get started.
           <div className="mt-5">
             <Button size="lg" onClick={onGoToAdd}>
               ➕ Add a plant
@@ -95,15 +103,17 @@ function SummaryHero({ plants, now }: { plants: Plant[]; now: number }) {
   return (
     <div
       className={cn(
-        "flex items-center gap-4 rounded-3xl border-2 bg-surface p-5",
-        allHappy ? "border-brand" : "border-water",
+        "flex items-center gap-4 rounded-3xl border-2 bg-surface p-5 shadow-lg shadow-black/25",
+        allHappy ? "border-brand" : "border-accent",
       )}
     >
-      <span aria-hidden="true" className="text-5xl">
-        {allHappy ? "🌿" : "💧"}
+      <span
+        className={cn("w-16 shrink-0", allHappy ? "text-brand animate-pop" : "text-accent")}
+      >
+        {allHappy ? <PottedPlant /> : <Sprout />}
       </span>
-      <div>
-        <p className="text-2xl font-bold leading-tight">
+      <div className="min-w-0">
+        <p className="font-display text-2xl font-semibold leading-tight">
           {allHappy ? "All caught up!" : `${due} task${due === 1 ? "" : "s"} due`}
         </p>
         <p className="text-lg text-ink-soft">
@@ -125,14 +135,14 @@ function ReminderBanner({
 }) {
   if (permission === "granted") {
     return (
-      <p className="rounded-xl2 border-2 border-brand bg-surface px-5 py-4 text-lg">
+      <p className="rounded-2xl border-2 border-brand bg-surface px-5 py-4 text-lg">
         🔔 Reminders are on. Keep this page open to receive watering alerts.
       </p>
     );
   }
   if (permission === "unsupported" || permission === "denied") {
     return (
-      <p className="rounded-xl2 border-2 border-line bg-surface px-5 py-4 text-lg text-ink-soft">
+      <p className="rounded-2xl border-2 border-line bg-surface px-5 py-4 text-lg text-ink-soft">
         {permission === "denied"
           ? "Reminders are blocked in your browser settings."
           : "Reminders aren’t supported on this browser."}
@@ -140,7 +150,7 @@ function ReminderBanner({
     );
   }
   return (
-    <div className="flex flex-col gap-3 rounded-xl2 border-2 border-line bg-surface px-5 py-4">
+    <div className="flex flex-col gap-3 rounded-2xl border-2 border-line bg-surface px-5 py-4">
       <p className="text-lg">Turn on reminders to get watering alerts.</p>
       <Button variant="primary" onClick={onEnable}>
         🔔 Enable reminders

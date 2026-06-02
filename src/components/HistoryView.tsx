@@ -3,6 +3,8 @@ import { formatDateTime, formatRelativeDay } from "../lib/format";
 import { CARE_META } from "../data/presets";
 import { Button } from "./ui/Button";
 import { EmptyState } from "./ui/EmptyState";
+import { ScreenHeader } from "./ui/ScreenHeader";
+import { WateringCan } from "./ui/illustrations";
 
 export function HistoryView({
   history,
@@ -14,9 +16,13 @@ export function HistoryView({
   onClear: () => void;
 }) {
   return (
-    <section aria-label="Watering history" className="flex flex-col gap-5">
+    <section aria-label="Care history" className="flex flex-col gap-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-2xl font-bold">Watering History</h2>
+        <ScreenHeader
+          icon="📋"
+          title="History"
+          subtitle="Everything you’ve done."
+        />
         {history.length > 0 && (
           <Button variant="danger" onClick={onClear}>
             🗑️ Clear
@@ -25,8 +31,8 @@ export function HistoryView({
       </div>
 
       {history.length === 0 ? (
-        <EmptyState emoji="💧" title="No waterings yet">
-          Water a plant and it’ll show up here.
+        <EmptyState illustration={<WateringCan />} title="No history yet">
+          Care for a plant and it’ll show up here.
         </EmptyState>
       ) : (
         <ol className="flex flex-col gap-4">
@@ -35,7 +41,7 @@ export function HistoryView({
             return (
               <li
                 key={entry.id}
-                className="flex items-center gap-4 rounded-xl2 border-2 border-line border-l-8 border-l-water bg-surface px-5 py-4"
+                className="animate-rise flex items-center gap-4 rounded-3xl border-2 border-line border-l-8 border-l-brand bg-surface px-5 py-4 shadow-md shadow-black/20"
               >
                 <span aria-hidden="true" className="text-4xl">
                   {meta.emoji}
@@ -45,7 +51,8 @@ export function HistoryView({
                     {meta.verb} {entry.plantName}
                   </p>
                   <p className="text-lg text-ink-soft">
-                    {formatRelativeDay(entry.at, now)} · {formatDateTime(entry.at)}
+                    {formatRelativeDay(entry.at, now)} ·{" "}
+                    {formatDateTime(entry.at)}
                   </p>
                 </div>
               </li>
