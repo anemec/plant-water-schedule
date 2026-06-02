@@ -51,7 +51,7 @@ export function AddView({
   return (
     <section aria-label="Add or look up a plant" className="flex flex-col gap-6">
       {/* Quick add */}
-      <div className="rounded-xl2 border-2 border-line bg-surface p-5">
+      <div className="rounded-3xl border-2 border-line bg-surface p-5 shadow-lg shadow-black/20">
         <h2 className="text-2xl font-bold">Quick add</h2>
         <p className="mt-1 text-lg text-ink-soft">
           Pick a common houseplant to add right away.
@@ -89,7 +89,7 @@ export function AddView({
       </div>
 
       {/* Lookup */}
-      <div className="rounded-xl2 border-2 border-line bg-surface p-5">
+      <div className="rounded-3xl border-2 border-line bg-surface p-5 shadow-lg shadow-black/20">
         <h2 className="text-2xl font-bold">Look up a new plant</h2>
         <p className="mt-1 text-lg text-ink-soft">
           Search any plant by name. We fetch a photo and description from

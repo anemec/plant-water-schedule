@@ -103,7 +103,21 @@ html {
 body {
   margin: 0;
   min-height: 100svh;
-  background: var(--color-canvas);
+  /* Soft, low-opacity glows for depth — text always sits on solid
+     surfaces, so contrast is unaffected. */
+  background:
+    radial-gradient(
+      60rem 40rem at 110% -10%,
+      color-mix(in oklab, var(--c-brand) 16%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      55rem 35rem at -10% 110%,
+      color-mix(in oklab, var(--c-water) 13%, transparent),
+      transparent 60%
+    ),
+    var(--color-canvas);
+  background-attachment: fixed;
   color: var(--color-ink);
   font-family: var(--font-sans);
   line-height: 1.6; /* generous for eye tracking */

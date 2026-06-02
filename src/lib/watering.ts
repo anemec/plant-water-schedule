@@ -34,6 +34,17 @@ export function waterStatus(plant: Plant, now: number = Date.now()): WaterStatus
   return { urgency: "ok", daysUntilDue: days, label: `Water in ${days} days` };
 }
 
+/**
+ * Progress toward the next watering, 0..1 (0 = just watered, 1 = due/overdue).
+ * A never-watered plant reads as fully due (1).
+ */
+export function wateringProgress(plant: Plant, now: number = Date.now()): number {
+  if (plant.lastWatered == null || plant.intervalDays <= 0) return 1;
+  const elapsedDays = (now - plant.lastWatered) / DAY_MS;
+  const fraction = elapsedDays / plant.intervalDays;
+  return Math.min(1, Math.max(0, fraction));
+}
+
 /** Sort comparator: most urgent (smallest days-until-due) first. */
 export function byUrgency(a: Plant, b: Plant, now: number = Date.now()): number {
   return daysUntilDue(a, now) - daysUntilDue(b, now);

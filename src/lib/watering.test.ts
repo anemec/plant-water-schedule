@@ -6,6 +6,7 @@ import {
   daysUntilDue,
   nextReminderTime,
   waterStatus,
+  wateringProgress,
 } from "./watering";
 
 function makePlant(overrides: Partial<Plant> = {}): Plant {
@@ -68,6 +69,26 @@ describe("waterStatus", () => {
     expect(waterStatus(one, NOW).label).toBe("Overdue by 1 day");
     const many = makePlant({ intervalDays: 7, lastWatered: NOW - 10 * DAY_MS });
     expect(waterStatus(many, NOW).label).toBe("Overdue by 3 days");
+  });
+});
+
+describe("wateringProgress", () => {
+  it("is 1 for a never-watered plant", () => {
+    expect(wateringProgress(makePlant(), NOW)).toBe(1);
+  });
+
+  it("is 0 right after watering", () => {
+    expect(wateringProgress(makePlant({ lastWatered: NOW }), NOW)).toBe(0);
+  });
+
+  it("is ~0.5 halfway through the interval", () => {
+    const plant = makePlant({ intervalDays: 8, lastWatered: NOW - 4 * DAY_MS });
+    expect(wateringProgress(plant, NOW)).toBeCloseTo(0.5, 5);
+  });
+
+  it("clamps to 1 when overdue", () => {
+    const plant = makePlant({ intervalDays: 7, lastWatered: NOW - 20 * DAY_MS });
+    expect(wateringProgress(plant, NOW)).toBe(1);
   });
 });
 

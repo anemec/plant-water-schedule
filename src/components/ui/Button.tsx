@@ -5,11 +5,11 @@ type Variant = "primary" | "water" | "secondary" | "ghost" | "danger";
 type Size = "md" | "lg" | "icon";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-brand text-on-brand hover:brightness-110",
-  water: "bg-water text-on-water hover:brightness-110",
+  primary: "bg-brand text-on-brand shadow-lg shadow-brand/25 hover:brightness-110",
+  water: "bg-water text-on-water shadow-lg shadow-water/25 hover:brightness-110",
   secondary: "bg-surface-2 text-ink border-2 border-line hover:border-brand",
   ghost: "bg-transparent text-ink border-2 border-line hover:bg-surface-2",
-  danger: "bg-danger text-on-danger hover:brightness-110",
+  danger: "bg-danger text-on-danger shadow-lg shadow-danger/25 hover:brightness-110",
 };
 
 const sizes: Record<Size, string> = {

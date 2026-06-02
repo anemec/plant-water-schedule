@@ -34,7 +34,7 @@ export function TabBar({
               className={cn(
                 "flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-xl2 border-2 font-bold transition-colors",
                 isActive
-                  ? "border-brand bg-brand text-on-brand"
+                  ? "border-brand bg-brand text-on-brand shadow-lg shadow-brand/30"
                   : "border-line bg-surface-2 text-ink hover:border-brand",
               )}
             >

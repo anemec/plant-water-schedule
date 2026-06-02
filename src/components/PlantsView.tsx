@@ -2,8 +2,9 @@ import { useState } from "react";
 import type { Plant } from "../types";
 import type { PlantActions } from "../hooks/usePlants";
 import type { NotifyPermission } from "../lib/notifications";
-import { byUrgency } from "../lib/watering";
+import { byUrgency, daysUntilDue } from "../lib/watering";
 import { showToast } from "../lib/toast";
+import { cn } from "../lib/util";
 import { PlantCard } from "./PlantCard";
 import { ScheduleDialog } from "./ScheduleDialog";
 import { Button } from "./ui/Button";
@@ -56,6 +57,7 @@ export function PlantsView({
         </EmptyState>
       ) : (
         <div className="flex flex-col gap-5">
+          <SummaryHero plants={plants} now={now} />
           {sorted.map((plant) => (
             <PlantCard
               key={plant.id}
@@ -80,6 +82,36 @@ export function PlantsView({
         }}
       />
     </section>
+  );
+}
+
+function SummaryHero({ plants, now }: { plants: Plant[]; now: number }) {
+  const needWater = plants.filter((p) => daysUntilDue(p, now) <= 0).length;
+  const allHappy = needWater === 0;
+
+  return (
+    <div
+      className={cn(
+        "flex items-center gap-4 rounded-3xl border-2 bg-surface p-5 shadow-lg shadow-black/20",
+        allHappy ? "border-brand" : "border-water",
+      )}
+    >
+      <span aria-hidden="true" className="text-5xl">
+        {allHappy ? "🌿" : "💧"}
+      </span>
+      <div>
+        <p className="text-2xl font-bold leading-tight">
+          {allHappy ? "All caught up!" : `${needWater} need water`}
+        </p>
+        <p className="text-lg text-ink-soft">
+          {allHappy
+            ? "Every plant is happy right now."
+            : `${needWater} of your ${plants.length} plants ${
+                needWater === 1 ? "is" : "are"
+              } due today.`}
+        </p>
+      </div>
+    </div>
   );
 }
 
