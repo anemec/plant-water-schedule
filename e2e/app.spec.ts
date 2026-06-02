@@ -21,8 +21,11 @@ test.describe("Planty Care", () => {
     await page.getByRole("button", { name: /water now/i }).click();
 
     await nav.getByRole("button", { name: /history/i }).click();
-    await expect(page.getByText("Monstera")).toBeVisible();
-    await expect(page.getByText(/today/i)).toBeVisible();
+    // Scope to the history list so the "Watered Monstera 💧" toast (which also
+    // contains "Monstera") doesn't cause a strict-mode match.
+    const historyList = page.getByRole("list");
+    await expect(historyList.getByText("Monstera", { exact: true })).toBeVisible();
+    await expect(historyList.getByText(/today/i)).toBeVisible();
   });
 
   test("toggles between dark and light themes", async ({ page }) => {

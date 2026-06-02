@@ -6,6 +6,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Allow the job to commit refreshed screenshots back to the repo.
+permissions:
+  contents: write
+
 jobs:
   e2e:
     runs-on: ubuntu-latest
@@ -28,7 +32,7 @@ jobs:
       - name: Run E2E tests (builds, previews, screenshots)
         run: npm run e2e
 
-      - name: Upload screenshots
+      - name: Upload screenshots artifact
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
@@ -43,3 +47,20 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 14
+
+      # Publish screenshots into the repo so they're viewable on a phone
+      # (GitHub mobile renders them in the file browser and README).
+      - name: Publish screenshots to repo
+        if: ${{ github.ref == 'refs/heads/main' && !cancelled() }}
+        run: |
+          mkdir -p docs/screenshots
+          cp e2e/screenshots/*.png docs/screenshots/ 2>/dev/null || true
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/screenshots
+          if git diff --staged --quiet; then
+            echo "No screenshot changes to commit."
+          else
+            git commit -m "Update UI screenshots [skip ci]"
+            git push
+          fi

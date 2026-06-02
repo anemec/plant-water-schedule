@@ -6,6 +6,19 @@ deployed to **GitHub Pages**.
 
 ![Tech](https://img.shields.io/badge/React-19-149eca) ![Tech](https://img.shields.io/badge/TypeScript-strict-3178c6) ![Tech](https://img.shields.io/badge/Tailwind-v4-38bdf8) ![Tests](https://img.shields.io/badge/tests-Vitest-6da744)
 
+## Screenshots
+
+Captured automatically in CI by Playwright on every push to `main`
+(see `.github/workflows/e2e.yml`).
+
+| Dark — My Plants | Light — My Plants |
+| --- | --- |
+| ![Dark theme, My Plants](docs/screenshots/dark-plants-mobile.png) | ![Light theme, My Plants](docs/screenshots/light-plants-mobile.png) |
+
+| Dark — Add | Dark — History |
+| --- | --- |
+| ![Dark theme, Add](docs/screenshots/dark-add-mobile.png) | ![Dark theme, History](docs/screenshots/dark-history-mobile.png) |
+
 ## Features
 
 - **My Plants** — every plant with a photo, watering status (water today /
