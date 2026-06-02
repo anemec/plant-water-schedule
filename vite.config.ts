@@ -36,6 +36,19 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,woff2}"],
+        runtimeCaching: [
+          {
+            // Cache iNaturalist photos so previously-viewed plants work offline.
+            urlPattern:
+              /^https:\/\/(static\.inaturalist\.org|inaturalist-open-data\.s3\.amazonaws\.com)\/.*/i,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "inat-photos",
+              expiration: { maxEntries: 120, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+        ],
       },
     }),
   ],

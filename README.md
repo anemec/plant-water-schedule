@@ -27,9 +27,13 @@ Captured automatically in CI by Playwright on every push to `main`
 - **Multiple care tasks** — track **watering, fertilizing, rotating, and
   repotting** per plant, each with its own interval and a one-tap "done".
 - **Quick add** built-ins: Pothos, Sansevieria, Bird of Paradise, Monstera.
-- **Look up new plants** — search any plant and pull a photo + description from
-  the **Wikipedia REST API** (no API key, CORS-friendly → works on static
-  hosting).
+- **Type-ahead search** to add any plant — an accessible WAI-ARIA combobox
+  (debounced, keyboard-navigable) backed by the **iNaturalist API**, with photos
+  and common + scientific names. No API key, CORS-friendly → works on static
+  hosting.
+- **Explore** — an artistic plant encyclopedia: a featured gallery plus search,
+  with photos, descriptions, and facts (data from the iNaturalist community).
+  Add anything you discover straight to your plants.
 - **Reminders** — pick weekdays + a time per plant; browser notifications fire
   while the page is open.
 - **History** — a running, human-friendly log of every care action.

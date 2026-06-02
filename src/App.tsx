@@ -7,6 +7,7 @@ import { Header } from "./components/Header";
 import { TabBar, type TabId } from "./components/TabBar";
 import { PlantsView } from "./components/PlantsView";
 import { AddView } from "./components/AddView";
+import { ExploreView } from "./components/ExploreView";
 import { HistoryView } from "./components/HistoryView";
 import { ToastHost } from "./components/ui/ToastHost";
 
@@ -49,6 +50,7 @@ export default function App() {
         {tab === "add" && (
           <AddView actions={actions} onAdded={() => setTab("plants")} />
         )}
+        {tab === "explore" && <ExploreView actions={actions} />}
         {tab === "history" && (
           <HistoryView
             history={history}
