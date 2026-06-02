@@ -1,79 +1,127 @@
 @import "tailwindcss";
 
 /* ===========================================================
-   Planty Care — design tokens (Tailwind v4 @theme)
-   Dark, accessible palette: deep lush greens on elevated
-   neutral surfaces, with a single emerald accent + water-blue
-   and clear state colors. Large, friendly typography.
+   Planty Care — accessible design system
+   Built for a single user with glaucoma:
+   - Dual theme (dark default), switchable at runtime via
+     [data-theme] on <html>.
+   - AAA contrast (>= 7:1). Status uses color + icon + word.
+   - Large, bold Atkinson Hyperlegible type to keep text crisp
+     and reduce halation of light-on-dark text.
+   - Single, centered column; strong focus; no glare (off-black
+     / off-white surfaces rather than pure #000 / #fff).
    =========================================================== */
-@theme {
-  --font-sans: "Nunito", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-    sans-serif;
 
-  /* Surfaces */
-  --color-canvas: #0b1410;
-  --color-surface: #14201a;
-  --color-surface-2: #1b2c22;
-  --color-line: #294034;
+/* Map Tailwind color utilities to runtime CSS variables.
+   @theme inline => utilities reference var(--c-*), so flipping
+   [data-theme] re-themes the whole app instantly. */
+@theme inline {
+  --font-sans: "Atkinson Hyperlegible", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
 
-  /* Text */
-  --color-ink: #e9f2ec;
-  --color-muted: #9fb6a8;
+  --color-canvas: var(--c-canvas);
+  --color-surface: var(--c-surface);
+  --color-surface-2: var(--c-surface-2);
+  --color-line: var(--c-line);
+  --color-ink: var(--c-ink);
+  --color-ink-soft: var(--c-ink-soft);
 
-  /* Brand + accents */
-  --color-brand: #34d399;
-  --color-brand-strong: #10b981;
-  --color-brand-deep: #065f46;
-  --color-water: #38bdf8;
-  --color-water-strong: #0ea5e9;
-
-  /* States */
-  --color-danger: #f87171;
-  --color-warning: #fbbf24;
+  --color-brand: var(--c-brand);
+  --color-on-brand: var(--c-on-brand);
+  --color-water: var(--c-water);
+  --color-on-water: var(--c-on-water);
+  --color-danger: var(--c-danger);
+  --color-on-danger: var(--c-on-danger);
+  --color-warning: var(--c-warning);
+  --color-focus: var(--c-focus);
 
   --radius-xl2: 1.25rem;
 }
 
-/* ----- Base ----- */
+/* ----- Dark theme (default) -----
+   Off-black canvas; near-white text. High contrast is kept;
+   halation is handled by large/bold type, not by dimming text. */
+:root,
+:root[data-theme="dark"] {
+  --c-canvas: #14191b;
+  --c-surface: #1f292c;
+  --c-surface-2: #2a3740;
+  --c-line: #3f525a;
+  --c-ink: #f4f8f5; /* ~15:1 on canvas */
+  --c-ink-soft: #cdd8d6; /* still >= 7:1 on canvas */
+
+  --c-brand: #5fdc97; /* bright green for fills + icons */
+  --c-on-brand: #06231a; /* dark text on brand */
+  --c-water: #56c8f5;
+  --c-on-water: #03212e;
+  --c-danger: #ff9a8f;
+  --c-on-danger: #340a06;
+  --c-warning: #ffce5c;
+  --c-focus: #ffd23f; /* high-visibility yellow ring */
+}
+
+/* ----- Light theme -----
+   Off-white canvas (less glare than pure white); near-black text.
+   Accents darkened so they keep AAA contrast on light. */
+:root[data-theme="light"] {
+  --c-canvas: #f4f4ee;
+  --c-surface: #ffffff;
+  --c-surface-2: #e9ede5;
+  --c-line: #b9c2b6;
+  --c-ink: #14181a; /* ~16:1 on canvas */
+  --c-ink-soft: #313c38; /* >= 7:1 on canvas */
+
+  --c-brand: #0f5f34;
+  --c-on-brand: #ffffff;
+  --c-water: #0a5f86;
+  --c-on-water: #ffffff;
+  --c-danger: #a4231b;
+  --c-on-danger: #ffffff;
+  --c-warning: #6f4a00;
+  --c-focus: #0b3d91;
+}
+
+/* ----- Text scale (set on <html>; remembered) ----- */
 html {
-  color-scheme: dark;
+  font-size: 20px; /* large baseline for low vision */
+  /* Keep focused content clear of the sticky nav (Focus Not Obscured). */
+  scroll-padding-top: 6.5rem;
+}
+html.scale-large {
+  font-size: 24px;
+}
+html.scale-xlarge {
+  font-size: 28px;
+}
+
+html {
+  color-scheme: dark light;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  /* Large by default for easy reading; bumped by the A+ toggle. */
-  font-size: 18px;
-}
-html.text-xl-mode {
-  font-size: 21px;
 }
 
 body {
   margin: 0;
   min-height: 100svh;
-  background:
-    radial-gradient(
-      1200px 600px at 100% -10%,
-      color-mix(in oklab, var(--color-brand-deep) 35%, transparent),
-      transparent
-    ),
-    radial-gradient(
-      900px 500px at -10% 110%,
-      color-mix(in oklab, var(--color-water-strong) 16%, transparent),
-      transparent
-    ),
-    var(--color-canvas);
-  background-attachment: fixed;
+  background: var(--color-canvas);
   color: var(--color-ink);
   font-family: var(--font-sans);
-  line-height: 1.5;
+  line-height: 1.6; /* generous for eye tracking */
+  letter-spacing: 0.01em;
   -webkit-font-smoothing: antialiased;
-  -webkit-tap-highlight-color: color-mix(in oklab, var(--color-brand) 25%, transparent);
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Visible, consistent focus ring for keyboard users. */
+/* Strong, consistent focus ring that works on both themes. */
 :focus-visible {
-  outline: 3px solid var(--color-water);
-  outline-offset: 2px;
-  border-radius: 6px;
+  outline: 4px solid var(--color-focus);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+::selection {
+  background: var(--color-brand);
+  color: var(--color-on-brand);
 }
 
 /* Safe-area helpers (notches / home indicator). */

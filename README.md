@@ -18,9 +18,28 @@ deployed to **GitHub Pages**.
 - **Reminders** — pick weekdays + a time per plant; browser notifications fire
   while the page is open.
 - **History** — a running, human-friendly log of every watering.
-- **Accessible & mobile-first** — large, high-contrast type; an **A+** toggle
-  for extra-large text; thumb-friendly bottom navigation; safe-area aware; full
-  keyboard focus styling; respects reduced motion.
+- **Built for low vision / glaucoma** — see below.
+
+### Accessibility (designed around glaucoma)
+
+The UI is tuned for an older user with glaucoma (reduced contrast sensitivity,
+light sensitivity, and peripheral-field / "tunnel" vision):
+
+- **Light + dark themes, dark by default** (light text on a dark, off-black
+  canvas). A clearly-labelled toggle switches and remembers the choice.
+- **AAA contrast (≥ 7:1)** for every text/background and button pairing,
+  verified numerically — in both themes.
+- **Atkinson Hyperlegible** font (designed for low vision) at a large 20px
+  baseline, with a 3-step **Normal / Large / Largest** size control.
+- **Halation-aware**: light-on-dark text is kept crisp with large, bold type
+  and an off-black (not pure-black) canvas rather than by dimming contrast.
+- **Tunnel-vision friendly**: a single, centered, narrow column on every screen
+  size; navigation and feedback stay in the central field (toasts appear
+  centered, not at a screen edge).
+- **Status uses colour + icon + word**, never colour alone.
+- **Large touch targets** (≥ 52px) with generous spacing, strong focus rings,
+  `scroll-padding` so the sticky nav never hides the focused element, off-white
+  (not pure-white) light mode to cut glare, and reduced-motion support.
 
 All data lives in your browser (`localStorage`); nothing is sent to a server.
 

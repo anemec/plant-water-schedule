@@ -16,16 +16,13 @@ export function TabBar({
   onChange: (tab: TabId) => void;
 }) {
   return (
+    // Sticky at the top, but the controls stay inside the centered column
+    // so they remain within a narrow (tunnel) visual field.
     <nav
       aria-label="Main sections"
-      className={cn(
-        // Mobile: fixed bottom bar in the thumb zone.
-        "pb-safe fixed inset-x-0 bottom-0 z-20 border-t border-line bg-canvas/90 backdrop-blur-md",
-        // Desktop: a centered top bar under the header.
-        "md:sticky md:top-0 md:border-t-0 md:border-b md:bg-canvas/80",
-      )}
+      className="sticky top-0 z-20 border-b-2 border-line bg-canvas"
     >
-      <div className="mx-auto flex max-w-4xl">
+      <div className="mx-auto grid max-w-xl grid-cols-3 gap-2 px-4 py-3">
         {TABS.map((tab) => {
           const isActive = tab.id === active;
           return (
@@ -35,17 +32,16 @@ export function TabBar({
               onClick={() => onChange(tab.id)}
               aria-current={isActive ? "page" : undefined}
               className={cn(
-                "flex flex-1 flex-col items-center justify-center gap-0.5 py-2 font-bold transition-colors",
-                "min-h-15 md:min-h-14 md:flex-row md:gap-2 md:text-lg",
+                "flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-xl2 border-2 font-bold transition-colors",
                 isActive
-                  ? "text-brand"
-                  : "text-muted hover:text-ink",
+                  ? "border-brand bg-brand text-on-brand"
+                  : "border-line bg-surface-2 text-ink hover:border-brand",
               )}
             >
-              <span aria-hidden="true" className="text-2xl md:text-xl">
+              <span aria-hidden="true" className="text-2xl">
                 {tab.icon}
               </span>
-              <span className="text-xs md:text-base">{tab.label}</span>
+              <span className="text-base">{tab.label}</span>
             </button>
           );
         })}

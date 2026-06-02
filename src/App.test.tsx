@@ -46,4 +46,13 @@ describe("App (integration)", () => {
     expect(screen.getByText("Monstera")).toBeInTheDocument();
     expect(screen.getByText(/today/i)).toBeInTheDocument();
   });
+
+  it("toggles the theme from the header control", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+    await user.click(screen.getByRole("button", { name: /switch to light mode/i }));
+    expect(document.documentElement.getAttribute("data-theme")).toBe("light");
+  });
 });

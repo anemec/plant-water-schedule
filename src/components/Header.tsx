@@ -1,47 +1,50 @@
-import { cn } from "../lib/util";
+import type { Theme } from "../hooks/useTheme";
+import { SCALE_LABELS, type TextScale } from "../hooks/useTextScale";
+import { Button } from "./ui/Button";
 
 export function Header({
-  largeText,
-  onToggleText,
+  theme,
+  onToggleTheme,
+  scale,
+  onCycleScale,
 }: {
-  largeText: boolean;
-  onToggleText: () => void;
+  theme: Theme;
+  onToggleTheme: () => void;
+  scale: TextScale;
+  onCycleScale: () => void;
 }) {
   return (
-    <header className="pt-safe sticky top-0 z-20 border-b border-line/70 bg-canvas/80 backdrop-blur-md md:static">
-      <div className="mx-auto flex max-w-4xl items-center justify-between gap-3 px-4 py-3">
-        <div className="flex min-w-0 items-center gap-2">
+    <header className="pt-safe border-b-2 border-line bg-canvas">
+      <div className="mx-auto flex max-w-xl flex-col gap-4 px-4 py-4">
+        <div className="flex items-center gap-3">
           <span
             aria-hidden="true"
-            className="grid size-10 shrink-0 place-items-center rounded-2xl bg-brand/15 text-2xl"
+            className="grid size-12 shrink-0 place-items-center rounded-xl2 bg-brand text-3xl"
           >
             🌱
           </span>
-          <div className="min-w-0">
-            <h1 className="truncate text-xl font-black tracking-tight sm:text-2xl">
-              Planty Care
-            </h1>
-            <p className="truncate text-xs text-muted">
-              Happy, well-watered plants
-            </p>
-          </div>
+          <h1 className="text-3xl font-bold tracking-tight">Planty Care</h1>
         </div>
 
-        <button
-          type="button"
-          onClick={onToggleText}
-          aria-pressed={largeText}
-          title="Toggle extra-large text"
-          className={cn(
-            "min-h-11 shrink-0 rounded-xl border px-3 font-black transition-colors",
-            largeText
-              ? "border-brand bg-brand/20 text-brand"
-              : "border-line bg-surface text-ink hover:border-brand/60",
-          )}
-        >
-          <span aria-hidden="true">A+</span>
-          <span className="sr-only">Toggle extra large text</span>
-        </button>
+        {/* Accessibility controls, kept prominent for a low-vision user. */}
+        <div className="grid grid-cols-2 gap-3">
+          <Button
+            variant="secondary"
+            className="w-full"
+            onClick={onToggleTheme}
+            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+          >
+            {theme === "dark" ? "🌙 Dark mode" : "☀️ Light mode"}
+          </Button>
+          <Button
+            variant="secondary"
+            className="w-full"
+            onClick={onCycleScale}
+            aria-label={`Change text size. Currently ${SCALE_LABELS[scale]}.`}
+          >
+            🔤 Text: {SCALE_LABELS[scale]}
+          </Button>
+        </div>
       </div>
     </header>
   );

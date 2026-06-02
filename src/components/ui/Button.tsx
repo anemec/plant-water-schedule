@@ -5,19 +5,17 @@ type Variant = "primary" | "water" | "secondary" | "ghost" | "danger";
 type Size = "md" | "lg" | "icon";
 
 const variants: Record<Variant, string> = {
-  primary:
-    "bg-brand-strong text-canvas hover:bg-brand focus-visible:bg-brand",
-  water: "bg-water-strong text-canvas hover:bg-water focus-visible:bg-water",
-  secondary:
-    "bg-surface-2 text-ink border border-line hover:border-brand/60 hover:bg-surface",
-  ghost: "bg-transparent text-ink hover:bg-surface-2",
-  danger: "bg-danger/15 text-danger border border-danger/40 hover:bg-danger/25",
+  primary: "bg-brand text-on-brand hover:brightness-110",
+  water: "bg-water text-on-water hover:brightness-110",
+  secondary: "bg-surface-2 text-ink border-2 border-line hover:border-brand",
+  ghost: "bg-transparent text-ink border-2 border-line hover:bg-surface-2",
+  danger: "bg-danger text-on-danger hover:brightness-110",
 };
 
 const sizes: Record<Size, string> = {
-  md: "min-h-11 px-4 text-base",
-  lg: "min-h-13 px-5 text-lg",
-  icon: "min-h-11 min-w-11 p-0 text-xl",
+  md: "min-h-13 px-5 text-lg",
+  lg: "min-h-14 px-6 text-xl w-full",
+  icon: "min-h-13 min-w-13 p-0 text-2xl",
 };
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -38,9 +36,9 @@ export function Button({
     <button
       type={type}
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-xl font-extrabold",
-        "transition-colors duration-150 active:translate-y-px",
-        "disabled:cursor-not-allowed disabled:opacity-50",
+        "inline-flex items-center justify-center gap-2 rounded-xl2 font-bold",
+        "transition-[filter,background-color,border-color] duration-150 active:translate-y-px",
+        "disabled:cursor-not-allowed disabled:opacity-60",
         variants[variant],
         sizes[size],
         className,

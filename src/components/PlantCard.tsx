@@ -6,11 +6,11 @@ import { cn } from "../lib/util";
 import { WaterBadge } from "./ui/Badge";
 import { Button } from "./ui/Button";
 
-const ringByUrgency = {
-  ok: "ring-line",
-  soon: "ring-water/40",
-  due: "ring-water/70",
-  overdue: "ring-danger/70",
+const borderByUrgency = {
+  ok: "border-line",
+  soon: "border-water",
+  due: "border-water",
+  overdue: "border-danger",
 } as const;
 
 export function PlantCard({
@@ -35,14 +35,13 @@ export function PlantCard({
           .sort((a, b) => a - b)
           .map((d) => WEEKDAY_LABELS[d])
           .join(", ")} at ${plant.reminderTime}`
-      : "No reminder set";
+      : "🔕 No reminder set";
 
   return (
     <article
       className={cn(
-        "flex flex-col overflow-hidden rounded-xl2 bg-surface ring-1 transition-shadow",
-        "shadow-lg shadow-black/20",
-        ringByUrgency[status.urgency],
+        "overflow-hidden rounded-xl2 border-2 bg-surface",
+        borderByUrgency[status.urgency],
       )}
     >
       {plant.image ? (
@@ -50,59 +49,53 @@ export function PlantCard({
           src={plant.image}
           alt={`Photo of ${plant.name}`}
           loading="lazy"
-          className="h-44 w-full object-cover"
+          className="h-52 w-full object-cover"
         />
       ) : (
         <div
           aria-hidden="true"
-          className="grid h-44 w-full place-items-center bg-surface-2 text-6xl"
+          className="grid h-52 w-full place-items-center bg-surface-2 text-7xl"
         >
           {plant.emoji}
         </div>
       )}
 
-      <div className="flex flex-1 flex-col gap-2 p-4">
+      <div className="flex flex-col gap-3 p-5">
         <div>
-          <h3 className="text-xl font-black leading-tight">{plant.name}</h3>
+          <h3 className="text-2xl font-bold leading-tight">{plant.name}</h3>
           {plant.species && (
-            <p className="text-sm italic text-muted">{plant.species}</p>
+            <p className="text-lg text-ink-soft">{plant.species}</p>
           )}
         </div>
 
         <WaterBadge urgency={status.urgency} label={status.label} />
 
-        <p className="text-sm text-muted">
-          💧 Every {plant.intervalDays} days · Last:{" "}
-          {formatDateTime(plant.lastWatered)}
-        </p>
-        <p className="text-sm text-muted">{reminder}</p>
+        <div className="text-lg text-ink-soft">
+          <p>💧 Water every {plant.intervalDays} days</p>
+          <p>🗓️ Last watered: {formatDateTime(plant.lastWatered)}</p>
+          <p>{reminder}</p>
+        </div>
 
-        <div className="mt-auto flex gap-2 pt-1">
-          <Button
-            variant="water"
-            className="flex-1"
-            onClick={() => onWater(plant.id)}
-          >
+        <div className="mt-1 flex flex-col gap-3">
+          <Button size="lg" variant="water" onClick={() => onWater(plant.id)}>
             💧 Water now
           </Button>
-          <Button
-            variant="secondary"
-            size="icon"
-            aria-label={`Edit schedule for ${plant.name}`}
-            title="Edit schedule"
-            onClick={() => onEdit(plant.id)}
-          >
-            ⚙️
-          </Button>
-          <Button
-            variant="secondary"
-            size="icon"
-            aria-label={`Remove ${plant.name}`}
-            title="Remove plant"
-            onClick={() => onRemove(plant.id)}
-          >
-            🗑️
-          </Button>
+          <div className="grid grid-cols-2 gap-3">
+            <Button
+              variant="secondary"
+              aria-label={`Edit schedule for ${plant.name}`}
+              onClick={() => onEdit(plant.id)}
+            >
+              ⚙️ Edit
+            </Button>
+            <Button
+              variant="secondary"
+              aria-label={`Remove ${plant.name}`}
+              onClick={() => onRemove(plant.id)}
+            >
+              🗑️ Remove
+            </Button>
+          </div>
         </div>
       </div>
     </article>

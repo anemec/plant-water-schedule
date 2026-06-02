@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 import { subscribeToast, type ToastMessage } from "../../lib/toast";
 
-const VISIBLE_MS = 2600;
+const VISIBLE_MS = 2800;
 
 export function ToastHost() {
   const [toast, setToast] = useState<ToastMessage | null>(null);
 
-  useEffect(() => {
-    return subscribeToast((t) => setToast(t));
-  }, []);
+  useEffect(() => subscribeToast(setToast), []);
 
   useEffect(() => {
     if (!toast) return;
@@ -19,13 +17,13 @@ export function ToastHost() {
   if (!toast) return null;
 
   return (
+    // Centered on screen so it's visible even with a narrow visual field.
     <div
       role="status"
       aria-live="polite"
-      className="pointer-events-none fixed inset-x-0 z-50 flex justify-center px-4"
-      style={{ bottom: "calc(5.5rem + env(safe-area-inset-bottom))" }}
+      className="pointer-events-none fixed inset-0 z-50 grid place-items-center p-4"
     >
-      <div className="max-w-[90%] rounded-2xl bg-brand-strong px-5 py-3 text-center text-base font-extrabold text-canvas shadow-lg shadow-black/40">
+      <div className="max-w-[90%] rounded-xl2 border-2 border-on-brand/20 bg-brand px-8 py-5 text-center text-2xl font-bold text-on-brand shadow-2xl">
         {toast.text}
       </div>
     </div>

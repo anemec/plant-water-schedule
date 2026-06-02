@@ -1,11 +1,12 @@
 import type { WaterUrgency } from "../../types";
 import { cn } from "../../lib/util";
 
+/** Solid, high-contrast pills. Each on-* pairing is chosen for AAA contrast. */
 const styles: Record<WaterUrgency, string> = {
-  ok: "bg-brand/15 text-brand",
-  soon: "bg-water/15 text-water",
-  due: "bg-water/25 text-water",
-  overdue: "bg-danger/20 text-danger",
+  ok: "bg-brand text-on-brand",
+  soon: "bg-water text-on-water",
+  due: "bg-water text-on-water",
+  overdue: "bg-danger text-on-danger",
 };
 
 const icons: Record<WaterUrgency, string> = {
@@ -25,11 +26,13 @@ export function WaterBadge({
   return (
     <span
       className={cn(
-        "inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1 text-sm font-bold",
+        "inline-flex w-fit items-center gap-2 rounded-full px-4 py-1.5 text-lg font-bold",
         styles[urgency],
       )}
     >
-      <span aria-hidden="true">{icons[urgency]}</span>
+      <span aria-hidden="true" className="text-xl">
+        {icons[urgency]}
+      </span>
       {label}
     </span>
   );

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { usePlants } from "./hooks/usePlants";
-import { useTextSize } from "./hooks/useTextSize";
+import { useTheme } from "./hooks/useTheme";
+import { useTextScale } from "./hooks/useTextScale";
 import { useReminders } from "./hooks/useReminders";
 import { Header } from "./components/Header";
 import { TabBar, type TabId } from "./components/TabBar";
@@ -11,7 +12,8 @@ import { ToastHost } from "./components/ui/ToastHost";
 
 export default function App() {
   const { plants, history, actions } = usePlants();
-  const { large, toggle } = useTextSize();
+  const { theme, toggle: toggleTheme } = useTheme();
+  const { scale, cycle: cycleScale } = useTextScale();
   const { permission, enable } = useReminders(plants);
   const [tab, setTab] = useState<TabId>("plants");
 
@@ -24,9 +26,16 @@ export default function App() {
 
   return (
     <div className="min-h-svh">
-      <Header largeText={large} onToggleText={toggle} />
+      <Header
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        scale={scale}
+        onCycleScale={cycleScale}
+      />
+      <TabBar active={tab} onChange={setTab} />
 
-      <main className="mx-auto max-w-4xl px-4 pt-5 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-8">
+      {/* Single, centered, narrow column — friendly to a narrow visual field. */}
+      <main className="mx-auto max-w-xl px-4 py-6 pb-24">
         {tab === "plants" && (
           <PlantsView
             plants={plants}
@@ -53,7 +62,6 @@ export default function App() {
         )}
       </main>
 
-      <TabBar active={tab} onChange={setTab} />
       <ToastHost />
     </div>
   );

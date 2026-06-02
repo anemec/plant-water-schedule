@@ -43,20 +43,19 @@ export function PlantsView({
 
   return (
     <section aria-label="My plants" className="flex flex-col gap-5">
-      <ReminderBanner
-        permission={permission}
-        onEnable={onEnableReminders}
-      />
+      <ReminderBanner permission={permission} onEnable={onEnableReminders} />
 
       {plants.length === 0 ? (
         <EmptyState emoji="🌿" title="No plants yet">
           Tap <strong>Add</strong> to plant your first green friend.
-          <div className="mt-4">
-            <Button onClick={onGoToAdd}>➕ Add a plant</Button>
+          <div className="mt-5">
+            <Button size="lg" onClick={onGoToAdd}>
+              ➕ Add a plant
+            </Button>
           </div>
         </EmptyState>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="flex flex-col gap-5">
           {sorted.map((plant) => (
             <PlantCard
               key={plant.id}
@@ -93,14 +92,14 @@ function ReminderBanner({
 }) {
   if (permission === "granted") {
     return (
-      <p className="rounded-xl bg-brand/10 px-4 py-3 text-sm text-brand">
+      <p className="rounded-xl2 border-2 border-brand bg-surface px-5 py-4 text-lg">
         🔔 Reminders are on. Keep this page open to receive watering alerts.
       </p>
     );
   }
   if (permission === "unsupported" || permission === "denied") {
     return (
-      <p className="rounded-xl bg-surface px-4 py-3 text-sm text-muted">
+      <p className="rounded-xl2 border-2 border-line bg-surface px-5 py-4 text-lg text-ink-soft">
         {permission === "denied"
           ? "Reminders are blocked in your browser settings."
           : "Reminders aren’t supported on this browser."}
@@ -108,11 +107,9 @@ function ReminderBanner({
     );
   }
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-surface px-4 py-3">
-      <p className="text-sm text-muted">
-        Turn on reminders to get watering alerts.
-      </p>
-      <Button variant="secondary" onClick={onEnable}>
+    <div className="flex flex-col gap-3 rounded-xl2 border-2 border-line bg-surface px-5 py-4">
+      <p className="text-lg">Turn on reminders to get watering alerts.</p>
+      <Button variant="primary" onClick={onEnable}>
         🔔 Enable reminders
       </Button>
     </div>

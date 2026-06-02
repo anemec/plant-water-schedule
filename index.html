@@ -1,18 +1,33 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="description" content="Planty Care — track your plant watering schedules, set reminders, and keep a watering history." />
-    <meta name="theme-color" content="#0b1410" />
+    <meta name="description" content="Planty Care — an accessible app to track plant watering schedules, reminders, and history." />
+    <meta name="theme-color" content="#14191b" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌱%3C/text%3E%3C/svg%3E" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap"
       rel="stylesheet"
     />
     <title>Planty Care 🌱</title>
+    <script>
+      // Apply the saved theme + text size before first paint to avoid a flash.
+      (function () {
+        try {
+          var t = localStorage.getItem("plantycare.theme") || "dark";
+          document.documentElement.setAttribute("data-theme", t);
+          var s = localStorage.getItem("plantycare.textScale") || "normal";
+          if (s !== "normal") {
+            document.documentElement.classList.add("scale-" + s);
+          }
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

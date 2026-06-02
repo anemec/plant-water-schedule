@@ -13,7 +13,9 @@ export function ScheduleDialog({
 }: {
   plant: Plant | null;
   onClose: () => void;
-  onSave: (patch: Pick<Plant, "intervalDays" | "reminderDays" | "reminderTime">) => void;
+  onSave: (
+    patch: Pick<Plant, "intervalDays" | "reminderDays" | "reminderTime">,
+  ) => void;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [intervalDays, setIntervalDays] = useState(7);
@@ -59,16 +61,16 @@ export function ScheduleDialog({
       onClose={onClose}
       aria-labelledby="schedule-title"
       className={cn(
-        "m-auto w-[92%] max-w-md rounded-xl2 bg-surface p-6 text-ink shadow-2xl",
-        "backdrop:bg-black/60 backdrop:backdrop-blur-sm",
+        "m-auto w-[92%] max-w-lg rounded-xl2 border-2 border-line bg-surface p-6 text-ink",
+        "backdrop:bg-black/70",
       )}
     >
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <h2 id="schedule-title" className="text-2xl font-black">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <h2 id="schedule-title" className="text-2xl font-bold">
           {plant ? `Schedule for ${plant.name}` : "Watering schedule"}
         </h2>
 
-        <label className="flex flex-col gap-1.5 font-bold">
+        <label className="flex flex-col gap-2 text-lg font-bold">
           Water every (days)
           <input
             type="number"
@@ -77,12 +79,14 @@ export function ScheduleDialog({
             inputMode="numeric"
             value={intervalDays}
             onChange={(e) => setIntervalDays(e.target.valueAsNumber)}
-            className="min-h-12 rounded-xl border border-line bg-canvas px-3 text-base font-normal"
+            className="min-h-14 rounded-xl2 border-2 border-line bg-canvas px-4 text-xl font-normal"
           />
         </label>
 
-        <fieldset className="rounded-xl border border-line p-3">
-          <legend className="px-1 font-bold">Remind me on these days</legend>
+        <fieldset className="rounded-xl2 border-2 border-line p-4">
+          <legend className="px-1 text-lg font-bold">
+            Remind me on these days
+          </legend>
           <div className="flex flex-wrap gap-2">
             {ALL_DAYS.map((day) => {
               const on = days.includes(day);
@@ -93,10 +97,10 @@ export function ScheduleDialog({
                   onClick={() => toggleDay(day)}
                   aria-pressed={on}
                   className={cn(
-                    "min-h-11 min-w-11 rounded-full border px-3 font-bold transition-colors",
+                    "min-h-13 min-w-13 rounded-xl2 border-2 px-3 text-lg font-bold transition-colors",
                     on
-                      ? "border-brand bg-brand text-canvas"
-                      : "border-line bg-canvas text-ink hover:border-brand/60",
+                      ? "border-brand bg-brand text-on-brand"
+                      : "border-line bg-canvas text-ink hover:border-brand",
                   )}
                 >
                   {WEEKDAY_LABELS[day]}
@@ -106,22 +110,22 @@ export function ScheduleDialog({
           </div>
         </fieldset>
 
-        <label className="flex flex-col gap-1.5 font-bold">
+        <label className="flex flex-col gap-2 text-lg font-bold">
           Reminder time
           <input
             type="time"
             value={time}
             onChange={(e) => setTime(e.target.value)}
-            className="min-h-12 rounded-xl border border-line bg-canvas px-3 text-base font-normal [color-scheme:dark]"
+            className="min-h-14 rounded-xl2 border-2 border-line bg-canvas px-4 text-xl font-normal"
           />
         </label>
 
-        <div className="mt-2 flex justify-end gap-3">
+        <div className="mt-1 grid grid-cols-2 gap-3">
           <Button variant="ghost" onClick={onClose}>
             Cancel
           </Button>
           <Button type="submit" variant="primary">
-            Save
+            💾 Save
           </Button>
         </div>
       </form>
