@@ -5,18 +5,21 @@
    =========================================================== */
 
 :root {
-  --green-900: #0f3d16;
-  --green-800: #1b5e20;
-  --green-600: #2e7d32;
+  /* Dark theme: dark surfaces, light letters. */
+  --green-900: #a5d6a7;   /* light green — headings & accents on dark */
+  --green-800: #1b5e20;   /* header bar */
+  --green-600: #43a047;   /* tab bar, borders */
   --green-400: #66bb6a;
-  --green-100: #e8f5e9;
-  --water-blue: #0277bd;
-  --water-blue-dark: #01579b;
-  --danger: #b71c1c;
-  --ink: #1a1a1a;
-  --paper: #ffffff;
-  --bg: #f4f9f4;
-  --card-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+  --green-100: #25342a;   /* dark "chip" surface */
+  --water-blue: #29b6f6;  /* brighter blue for dark bg */
+  --water-blue-dark: #0288d1;
+  --danger: #ef5350;
+  --ink: #eaf3ea;         /* light letters */
+  --muted: #b4c2b5;       /* muted light text */
+  --paper: #17211a;       /* dark card surface */
+  --bg: #0d130f;          /* dark page background */
+  --field: #0f1712;       /* input background */
+  --card-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
   --radius: 14px;
 
   /* Base font scale — large by default for easy reading. */
@@ -30,7 +33,7 @@ html.xl-text {
 
 * { box-sizing: border-box; }
 
-html { font-size: var(--font-base); }
+html { font-size: var(--font-base); color-scheme: dark; }
 
 body {
   margin: 0;
@@ -189,7 +192,7 @@ main {
   color: var(--green-900);
   padding: 0 0.4rem;
 }
-.help { color: #4a4a4a; font-size: 0.9rem; margin: 0.3rem 0 0.8rem; }
+.help { color: var(--muted); font-size: 0.9rem; margin: 0.3rem 0 0.8rem; }
 
 /* --- Plant grid --- */
 .plant-grid {
@@ -227,7 +230,7 @@ main {
 }
 .plant-body { padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
 .plant-name { margin: 0; font-size: 1.4rem; color: var(--green-900); }
-.plant-species { margin: 0; font-style: italic; color: #555; font-size: 0.95rem; }
+.plant-species { margin: 0; font-style: italic; color: var(--muted); font-size: 0.95rem; }
 
 .water-badge {
   display: inline-block;
@@ -240,7 +243,7 @@ main {
 .badge-due { background: #e1f5fe; color: var(--water-blue-dark); }
 .badge-overdue { background: #ffebee; color: var(--danger); }
 
-.plant-meta { font-size: 0.9rem; color: #444; }
+.plant-meta { font-size: 0.9rem; color: var(--muted); }
 .plant-actions { display: flex; gap: 0.5rem; margin-top: auto; }
 .plant-actions .btn { flex: 1; padding: 0.6rem; min-height: 48px; font-size: 0.95rem; }
 .icon-btn {
@@ -291,9 +294,12 @@ input[type="text"], input[type="number"], input[type="time"] {
   border-radius: 10px;
   min-height: 52px;
   width: 100%;
-  background: #fff;
+  background: var(--field);
   color: var(--ink);
 }
+input::placeholder { color: var(--muted); }
+/* Make the native time-picker icon visible on dark fields. */
+input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1); }
 
 .lookup-result { margin-top: 1rem; }
 .result-card {
@@ -312,8 +318,8 @@ input[type="text"], input[type="number"], input[type="time"] {
 }
 .result-info { flex: 1; min-width: 200px; }
 .result-info h3 { margin: 0 0 0.4rem; color: var(--green-900); }
-.result-info p { margin: 0 0 0.8rem; font-size: 0.95rem; }
-.loader { font-style: italic; color: #555; }
+.result-info p { margin: 0 0 0.8rem; font-size: 0.95rem; color: var(--ink); }
+.loader { font-style: italic; color: var(--muted); }
 
 /* --- History --- */
 .history-list { list-style: none; padding: 0; margin: 0; }
@@ -331,7 +337,7 @@ input[type="text"], input[type="number"], input[type="time"] {
 .history-emoji { font-size: 1.8rem; }
 .history-text { flex: 1; }
 .history-plant { font-weight: 800; font-size: 1.15rem; color: var(--green-900); }
-.history-date { color: #444; font-size: 0.9rem; }
+.history-date { color: var(--muted); font-size: 0.9rem; }
 
 /* --- Dialog --- */
 .schedule-dialog {
@@ -340,7 +346,9 @@ input[type="text"], input[type="number"], input[type="time"] {
   padding: 1.5rem;
   max-width: 460px;
   width: 92%;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
 }
 .schedule-dialog::backdrop { background: rgba(0, 0, 0, 0.5); }
 .schedule-dialog h2 { margin-top: 0; color: var(--green-900); }
@@ -350,14 +358,14 @@ input[type="text"], input[type="number"], input[type="time"] {
 .days-row { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.4rem; }
 .day-toggle {
   border: 2px solid var(--green-600);
-  background: #fff;
+  background: var(--field);
   border-radius: 999px;
   padding: 0.5rem 0.7rem;
   cursor: pointer;
   font-weight: 700;
   min-width: 52px;
   min-height: 48px;
-  color: var(--green-900);
+  color: var(--ink);
 }
 .day-toggle[aria-pressed="true"] { background: var(--green-600); color: #fff; }
 .dialog-actions { display: flex; gap: 0.6rem; justify-content: flex-end; margin-top: 1.4rem; }
@@ -366,7 +374,7 @@ input[type="text"], input[type="number"], input[type="time"] {
 .empty-state {
   text-align: center;
   font-size: 1.15rem;
-  color: #555;
+  color: var(--muted);
   padding: 2.5rem 1rem;
   background: var(--paper);
   border-radius: var(--radius);
@@ -377,7 +385,7 @@ input[type="text"], input[type="number"], input[type="time"] {
 .app-footer {
   text-align: center;
   padding: 1.5rem;
-  color: #4a4a4a;
+  color: var(--muted);
   font-size: 0.9rem;
 }
 
