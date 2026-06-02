@@ -5,18 +5,16 @@ import type { AppState } from "../types";
 describe("storage", () => {
   beforeEach(() => localStorage.clear());
 
-  it("returns an empty (non-shared) state when nothing is stored", () => {
+  it("returns a fresh empty state when nothing is stored", () => {
     const a = loadState();
     expect(a).toEqual(emptyState);
-    // Mutating the result must not affect the shared empty constant.
     a.plants.push({
       id: "x",
       name: "x",
       species: "",
       emoji: "🪴",
-      intervalDays: 7,
-      lastWatered: null,
       image: null,
+      tasks: [{ type: "water", intervalDays: 7, lastDone: null }],
       reminderDays: [],
       reminderTime: "09:00",
     });
@@ -31,15 +29,17 @@ describe("storage", () => {
           name: "Pothos",
           species: "Epipremnum aureum",
           emoji: "🌿",
-          intervalDays: 7,
-          lastWatered: 1000,
           image: null,
+          tasks: [
+            { type: "water", intervalDays: 7, lastDone: 1000 },
+            { type: "fertilize", intervalDays: 30, lastDone: null },
+          ],
           reminderDays: [1, 4],
           reminderTime: "08:30",
         },
       ],
       history: [
-        { id: "h1", plantId: "p1", plantName: "Pothos", emoji: "🌿", at: 999 },
+        { id: "h1", plantId: "p1", plantName: "Pothos", taskType: "water", at: 999 },
       ],
     };
     saveState(state);
@@ -51,8 +51,30 @@ describe("storage", () => {
     expect(loadState()).toEqual(emptyState);
   });
 
-  it("tolerates partial/missing fields", () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ plants: "oops" }));
-    expect(loadState()).toEqual({ plants: [], history: [] });
+  it("migrates legacy (watering-only) plants into a water task", () => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        plants: [
+          {
+            id: "old",
+            name: "Fern",
+            species: "",
+            emoji: "🌿",
+            intervalDays: 5,
+            lastWatered: 1234,
+            reminderDays: [2],
+            reminderTime: "07:00",
+          },
+        ],
+        history: [{ id: "h", plantId: "old", plantName: "Fern", at: 1 }],
+      }),
+    );
+    const state = loadState();
+    expect(state.plants[0].tasks).toEqual([
+      { type: "water", intervalDays: 5, lastDone: 1234 },
+    ]);
+    // Legacy history entries default to the water task type.
+    expect(state.history[0].taskType).toBe("water");
   });
 });

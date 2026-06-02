@@ -10,9 +10,11 @@ function makePlant(overrides: Partial<Plant> = {}): Plant {
     name: "Pothos",
     species: "Epipremnum aureum",
     emoji: "🌿",
-    intervalDays: 7,
-    lastWatered: null,
     image: null,
+    tasks: [
+      { type: "water", intervalDays: 7, lastDone: null },
+      { type: "fertilize", intervalDays: 30, lastDone: null },
+    ],
     reminderDays: [],
     reminderTime: "09:00",
     ...overrides,
@@ -22,19 +24,22 @@ function makePlant(overrides: Partial<Plant> = {}): Plant {
 const noop = () => {};
 
 describe("PlantCard", () => {
-  it("renders the plant name, species and a 'water today' status", () => {
+  it("renders the plant name, species and a row per care task", () => {
     render(
       <PlantCard
         plant={makePlant()}
         now={Date.now()}
-        onWater={noop}
+        onDoTask={noop}
         onEdit={noop}
         onRemove={noop}
       />,
     );
     expect(screen.getByText("Pothos")).toBeInTheDocument();
     expect(screen.getByText("Epipremnum aureum")).toBeInTheDocument();
-    expect(screen.getByText(/water today/i)).toBeInTheDocument();
+    expect(screen.getByText("Water")).toBeInTheDocument();
+    expect(screen.getByText("Fertilize")).toBeInTheDocument();
+    // Never-done tasks read as "Due today".
+    expect(screen.getAllByText(/due today/i).length).toBeGreaterThanOrEqual(2);
   });
 
   it("shows the emoji fallback when there is no image", () => {
@@ -42,7 +47,7 @@ describe("PlantCard", () => {
       <PlantCard
         plant={makePlant({ image: null })}
         now={Date.now()}
-        onWater={noop}
+        onDoTask={noop}
         onEdit={noop}
         onRemove={noop}
       />,
@@ -50,19 +55,21 @@ describe("PlantCard", () => {
     expect(screen.queryByRole("img")).not.toBeInTheDocument();
   });
 
-  it("calls onWater with the plant id", async () => {
-    const onWater = vi.fn();
+  it("calls onDoTask with the plant id and task type", async () => {
+    const onDoTask = vi.fn();
     render(
       <PlantCard
         plant={makePlant()}
         now={Date.now()}
-        onWater={onWater}
+        onDoTask={onDoTask}
         onEdit={noop}
         onRemove={noop}
       />,
     );
     await userEvent.click(screen.getByRole("button", { name: /water now/i }));
-    expect(onWater).toHaveBeenCalledWith("p1");
+    expect(onDoTask).toHaveBeenCalledWith("p1", "water");
+    await userEvent.click(screen.getByRole("button", { name: /fertilize now/i }));
+    expect(onDoTask).toHaveBeenCalledWith("p1", "fertilize");
   });
 
   it("exposes accessible edit and remove controls", async () => {
@@ -72,17 +79,15 @@ describe("PlantCard", () => {
       <PlantCard
         plant={makePlant()}
         now={Date.now()}
-        onWater={noop}
+        onDoTask={noop}
         onEdit={onEdit}
         onRemove={onRemove}
       />,
     );
     await userEvent.click(
-      screen.getByRole("button", { name: /edit schedule for pothos/i }),
+      screen.getByRole("button", { name: /edit care for pothos/i }),
     );
-    await userEvent.click(
-      screen.getByRole("button", { name: /remove pothos/i }),
-    );
+    await userEvent.click(screen.getByRole("button", { name: /remove pothos/i }));
     expect(onEdit).toHaveBeenCalledTimes(1);
     expect(onRemove).toHaveBeenCalledTimes(1);
   });

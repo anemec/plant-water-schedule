@@ -43,8 +43,11 @@ describe("App (integration)", () => {
     await user.click(await screen.findByRole("button", { name: /water now/i }));
 
     await user.click(within(nav).getByRole("button", { name: /history/i }));
-    expect(screen.getByText("Monstera")).toBeInTheDocument();
-    expect(screen.getByText(/today/i)).toBeInTheDocument();
+    // Scope to the history list so the toast ("Watered Monstera") doesn't
+    // double-match.
+    const historyList = screen.getByRole("list");
+    expect(within(historyList).getByText(/watered monstera/i)).toBeInTheDocument();
+    expect(within(historyList).getByText(/today/i)).toBeInTheDocument();
   });
 
   it("toggles the theme from the header control", async () => {

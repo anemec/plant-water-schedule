@@ -6,25 +6,25 @@ import { PRESETS } from "../data/presets";
 describe("usePlants", () => {
   beforeEach(() => {
     localStorage.clear();
-    // Avoid real network from addPreset's background photo fetch.
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({ ok: false, json: () => Promise.resolve({}) }),
     );
   });
 
-  it("adds a custom plant and rejects duplicates (case-insensitive)", () => {
+  it("adds a custom plant (with a water task) and rejects duplicates", () => {
     const { result } = renderHook(() => usePlants());
 
     act(() => {
-      const ok = result.current.actions.addCustomPlant({ name: "Fern" });
-      expect(ok).toBe(true);
+      expect(result.current.actions.addCustomPlant({ name: "Fern" })).toBe(true);
     });
     expect(result.current.plants).toHaveLength(1);
+    expect(result.current.plants[0].tasks).toEqual([
+      { type: "water", intervalDays: 7, lastDone: null },
+    ]);
 
     act(() => {
-      const ok = result.current.actions.addCustomPlant({ name: "fern" });
-      expect(ok).toBe(false);
+      expect(result.current.actions.addCustomPlant({ name: "fern" })).toBe(false);
     });
     expect(result.current.plants).toHaveLength(1);
   });
@@ -32,45 +32,56 @@ describe("usePlants", () => {
   it("adds a preset only once", () => {
     const { result } = renderHook(() => usePlants());
     const pothos = PRESETS[0];
-
     act(() => result.current.actions.addPreset(pothos));
     act(() => result.current.actions.addPreset(pothos));
-
     expect(
       result.current.plants.filter((p) => p.name === pothos.name),
     ).toHaveLength(1);
   });
 
-  it("watering records history and updates lastWatered", () => {
+  it("doTask records history and updates that task's lastDone", () => {
     const { result } = renderHook(() => usePlants());
-
-    act(() => {
-      result.current.actions.addCustomPlant({ name: "Cactus" });
-    });
+    act(() => result.current.actions.addCustomPlant({ name: "Cactus" }));
     const id = result.current.plants[0].id;
 
-    act(() => result.current.actions.waterPlant(id));
+    act(() => result.current.actions.doTask(id, "water"));
 
-    expect(result.current.plants[0].lastWatered).toBeTypeOf("number");
+    const waterTask = result.current.plants[0].tasks.find(
+      (t) => t.type === "water",
+    );
+    expect(waterTask?.lastDone).toBeTypeOf("number");
     expect(result.current.history).toHaveLength(1);
-    expect(result.current.history[0].plantName).toBe("Cactus");
+    expect(result.current.history[0]).toMatchObject({
+      plantName: "Cactus",
+      taskType: "water",
+    });
   });
 
-  it("updates a schedule and clears history", () => {
+  it("updatePlantCare replaces tasks and reminders", () => {
     const { result } = renderHook(() => usePlants());
     act(() => result.current.actions.addCustomPlant({ name: "Ivy" }));
     const id = result.current.plants[0].id;
 
     act(() =>
-      result.current.actions.updateSchedule(id, {
-        intervalDays: 3,
+      result.current.actions.updatePlantCare(id, {
+        tasks: [
+          { type: "water", intervalDays: 3, lastDone: null },
+          { type: "fertilize", intervalDays: 30, lastDone: null },
+        ],
         reminderDays: [1, 3, 5],
+        reminderTime: "08:00",
       }),
     );
-    expect(result.current.plants[0].intervalDays).toBe(3);
-    expect(result.current.plants[0].reminderDays).toEqual([1, 3, 5]);
 
-    act(() => result.current.actions.waterPlant(id));
+    expect(result.current.plants[0].tasks).toHaveLength(2);
+    expect(result.current.plants[0].reminderDays).toEqual([1, 3, 5]);
+  });
+
+  it("clears history", () => {
+    const { result } = renderHook(() => usePlants());
+    act(() => result.current.actions.addCustomPlant({ name: "Aloe" }));
+    const id = result.current.plants[0].id;
+    act(() => result.current.actions.doTask(id, "water"));
     expect(result.current.history).toHaveLength(1);
     act(() => result.current.actions.clearHistory());
     expect(result.current.history).toHaveLength(0);
@@ -78,10 +89,9 @@ describe("usePlants", () => {
 
   it("persists plants across hook remounts", () => {
     const first = renderHook(() => usePlants());
-    act(() => first.result.current.actions.addCustomPlant({ name: "Aloe" }));
+    act(() => first.result.current.actions.addCustomPlant({ name: "Sage" }));
     first.unmount();
-
     const second = renderHook(() => usePlants());
-    expect(second.result.current.plants.map((p) => p.name)).toContain("Aloe");
+    expect(second.result.current.plants.map((p) => p.name)).toContain("Sage");
   });
 });

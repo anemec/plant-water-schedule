@@ -1,15 +1,15 @@
-import type { WaterUrgency } from "../../types";
+import type { CareUrgency } from "../../types";
 import { cn } from "../../lib/util";
 
 /** Solid, high-contrast pills. Each on-* pairing is chosen for AAA contrast. */
-const styles: Record<WaterUrgency, string> = {
+const styles: Record<CareUrgency, string> = {
   ok: "bg-brand text-on-brand",
   soon: "bg-water text-on-water",
   due: "bg-water text-on-water",
   overdue: "bg-danger text-on-danger",
 };
 
-const icons: Record<WaterUrgency, string> = {
+const icons: Record<CareUrgency, string> = {
   ok: "✓",
   soon: "⏳",
   due: "💧",
@@ -20,7 +20,7 @@ export function WaterBadge({
   urgency,
   label,
 }: {
-  urgency: WaterUrgency;
+  urgency: CareUrgency;
   label: string;
 }) {
   return (

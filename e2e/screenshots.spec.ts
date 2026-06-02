@@ -2,7 +2,7 @@ import { test, type Page } from "@playwright/test";
 
 const DAY = 24 * 60 * 60 * 1000;
 
-/** Seed localStorage with a few plants in different watering states. */
+/** Seed localStorage with a few plants showing different care-task states. */
 function seed(theme: "dark" | "light") {
   const now = Date.now();
   const plants = [
@@ -11,9 +11,11 @@ function seed(theme: "dark" | "light") {
       name: "Monstera",
       species: "Monstera deliciosa",
       emoji: "🍃",
-      intervalDays: 7,
-      lastWatered: now,
       image: null,
+      tasks: [
+        { type: "water", intervalDays: 7, lastDone: now },
+        { type: "fertilize", intervalDays: 30, lastDone: now - 35 * DAY },
+      ],
       reminderDays: [1, 4],
       reminderTime: "09:00",
     },
@@ -22,9 +24,8 @@ function seed(theme: "dark" | "light") {
       name: "Pothos",
       species: "Epipremnum aureum",
       emoji: "🌿",
-      intervalDays: 7,
-      lastWatered: now - 7 * DAY,
       image: null,
+      tasks: [{ type: "water", intervalDays: 7, lastDone: now - 7 * DAY }],
       reminderDays: [],
       reminderTime: "09:00",
     },
@@ -33,20 +34,22 @@ function seed(theme: "dark" | "light") {
       name: "Bird of Paradise",
       species: "Strelitzia",
       emoji: "🌸",
-      intervalDays: 7,
-      lastWatered: now - 10 * DAY,
       image: null,
+      tasks: [
+        { type: "water", intervalDays: 7, lastDone: now - 10 * DAY },
+        { type: "rotate", intervalDays: 14, lastDone: now - 4 * DAY },
+      ],
       reminderDays: [2, 5],
       reminderTime: "08:00",
     },
   ];
   const history = [
-    { id: "h1", plantId: "a", plantName: "Monstera", emoji: "🍃", at: now },
+    { id: "h1", plantId: "a", plantName: "Monstera", taskType: "water", at: now },
     {
       id: "h2",
       plantId: "b",
       plantName: "Pothos",
-      emoji: "🌿",
+      taskType: "fertilize",
       at: now - 2 * DAY,
     },
   ];

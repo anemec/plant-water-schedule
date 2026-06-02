@@ -1,6 +1,6 @@
-import type { WaterUrgency } from "../../types";
+import type { CareUrgency } from "../../types";
 
-const fill: Record<WaterUrgency, string> = {
+const fill: Record<CareUrgency, string> = {
   ok: "bg-brand",
   soon: "bg-water",
   due: "bg-water",
@@ -16,7 +16,7 @@ export function WaterProgress({
   urgency,
   progress,
 }: {
-  urgency: WaterUrgency;
+  urgency: CareUrgency;
   progress: number;
 }) {
   const pct = Math.round(progress * 100);

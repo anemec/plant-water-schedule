@@ -21,16 +21,20 @@ Captured automatically in CI by Playwright on every push to `main`
 
 ## Features
 
-- **My Plants** — every plant with a photo, watering status (water today /
-  overdue / water in N days), last-watered time, and reminder summary. Sorted
-  most-urgent first.
+- **My Plants** — every plant with a photo and, per care task, a status badge
+  (due today / overdue / due in N days) and a progress bar. Sorted most-urgent
+  first, with a summary of how many tasks are due.
+- **Multiple care tasks** — track **watering, fertilizing, rotating, and
+  repotting** per plant, each with its own interval and a one-tap "done".
 - **Quick add** built-ins: Pothos, Sansevieria, Bird of Paradise, Monstera.
 - **Look up new plants** — search any plant and pull a photo + description from
   the **Wikipedia REST API** (no API key, CORS-friendly → works on static
   hosting).
 - **Reminders** — pick weekdays + a time per plant; browser notifications fire
   while the page is open.
-- **History** — a running, human-friendly log of every watering.
+- **History** — a running, human-friendly log of every care action.
+- **Installable PWA** — add to your home screen and use it **offline** (Workbox
+  service worker via `vite-plugin-pwa`).
 - **Built for low vision / glaucoma** — see below.
 
 ### Accessibility (designed around glaucoma)

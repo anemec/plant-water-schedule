@@ -24,7 +24,7 @@ test.describe("Planty Care", () => {
     // Scope to the history list so the "Watered Monstera 💧" toast (which also
     // contains "Monstera") doesn't cause a strict-mode match.
     const historyList = page.getByRole("list");
-    await expect(historyList.getByText("Monstera", { exact: true })).toBeVisible();
+    await expect(historyList.getByText(/watered monstera/i)).toBeVisible();
     await expect(historyList.getByText(/today/i)).toBeVisible();
   });
 

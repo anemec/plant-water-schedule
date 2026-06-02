@@ -1,8 +1,9 @@
 import { useState } from "react";
-import type { Plant } from "../types";
+import type { CareType, Plant } from "../types";
 import type { PlantActions } from "../hooks/usePlants";
 import type { NotifyPermission } from "../lib/notifications";
-import { byUrgency, daysUntilDue } from "../lib/watering";
+import { dueTaskCount, plantSoonestDue } from "../lib/care";
+import { CARE_META } from "../data/presets";
 import { showToast } from "../lib/toast";
 import { cn } from "../lib/util";
 import { PlantCard } from "./PlantCard";
@@ -27,12 +28,14 @@ export function PlantsView({
 }) {
   const [editing, setEditing] = useState<Plant | null>(null);
 
-  const sorted = [...plants].sort((a, b) => byUrgency(a, b, now));
+  const sorted = [...plants].sort(
+    (a, b) => plantSoonestDue(a, now) - plantSoonestDue(b, now),
+  );
 
-  function handleWater(id: string) {
+  function handleDoTask(id: string, type: CareType) {
     const plant = plants.find((p) => p.id === id);
-    actions.waterPlant(id);
-    if (plant) showToast(`Watered ${plant.name} 💧`);
+    actions.doTask(id, type);
+    if (plant) showToast(`${CARE_META[type].verb} ${plant.name} ${CARE_META[type].emoji}`);
   }
 
   function handleRemove(id: string) {
@@ -63,7 +66,7 @@ export function PlantsView({
               key={plant.id}
               plant={plant}
               now={now}
-              onWater={handleWater}
+              onDoTask={handleDoTask}
               onEdit={() => setEditing(plant)}
               onRemove={handleRemove}
             />
@@ -76,8 +79,8 @@ export function PlantsView({
         onClose={() => setEditing(null)}
         onSave={(patch) => {
           if (!editing) return;
-          actions.updateSchedule(editing.id, patch);
-          showToast(`Schedule saved for ${editing.name}`);
+          actions.updatePlantCare(editing.id, patch);
+          showToast(`Care saved for ${editing.name}`);
           setEditing(null);
         }}
       />
@@ -86,13 +89,13 @@ export function PlantsView({
 }
 
 function SummaryHero({ plants, now }: { plants: Plant[]; now: number }) {
-  const needWater = plants.filter((p) => daysUntilDue(p, now) <= 0).length;
-  const allHappy = needWater === 0;
+  const due = dueTaskCount(plants, now);
+  const allHappy = due === 0;
 
   return (
     <div
       className={cn(
-        "flex items-center gap-4 rounded-3xl border-2 bg-surface p-5 shadow-lg shadow-black/20",
+        "flex items-center gap-4 rounded-3xl border-2 bg-surface p-5",
         allHappy ? "border-brand" : "border-water",
       )}
     >
@@ -101,14 +104,12 @@ function SummaryHero({ plants, now }: { plants: Plant[]; now: number }) {
       </span>
       <div>
         <p className="text-2xl font-bold leading-tight">
-          {allHappy ? "All caught up!" : `${needWater} need water`}
+          {allHappy ? "All caught up!" : `${due} task${due === 1 ? "" : "s"} due`}
         </p>
         <p className="text-lg text-ink-soft">
           {allHappy
             ? "Every plant is happy right now."
-            : `${needWater} of your ${plants.length} plants ${
-                needWater === 1 ? "is" : "are"
-              } due today.`}
+            : `${due} care task${due === 1 ? "" : "s"} need doing today.`}
         </p>
       </div>
     </div>

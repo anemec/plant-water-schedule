@@ -1,5 +1,5 @@
 import type { Plant } from "../types";
-import { nextReminderTime } from "./watering";
+import { nextReminderTime } from "./care";
 
 export type NotifyPermission = "default" | "granted" | "denied" | "unsupported";
 
@@ -43,9 +43,12 @@ export function scheduleReminders(plants: Plant[]): () => void {
 }
 
 function fireReminder(plant: Plant): void {
+  const waterTask = plant.tasks.find((t) => t.type === "water");
   try {
     new Notification(`🌱 Time to water ${plant.name}!`, {
-      body: `Planty Care reminder · water every ${plant.intervalDays} days.`,
+      body: waterTask
+        ? `Planty Care reminder · water every ${waterTask.intervalDays} days.`
+        : "Planty Care watering reminder.",
       icon: plant.image ?? undefined,
       tag: `plantycare-${plant.id}`,
     });

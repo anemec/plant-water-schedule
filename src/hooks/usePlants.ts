@@ -1,10 +1,22 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { AppState, HistoryEntry, Plant, Preset } from "../types";
+import type {
+  AppState,
+  CareTask,
+  CareType,
+  HistoryEntry,
+  Plant,
+  Preset,
+  Weekday,
+} from "../types";
 import { loadState, saveState } from "../lib/storage";
 import { lookupPlant } from "../lib/wiki";
 import { uid } from "../lib/util";
 
 const DEFAULT_TIME = "09:00";
+
+function waterTask(intervalDays: number): CareTask {
+  return { type: "water", intervalDays, lastDone: null };
+}
 
 export interface PlantActions {
   addPreset: (preset: Preset) => void;
@@ -14,8 +26,13 @@ export interface PlantActions {
     image?: string | null;
   }) => boolean;
   removePlant: (id: string) => void;
-  waterPlant: (id: string) => void;
-  updateSchedule: (id: string, patch: Partial<Plant>) => void;
+  /** Mark a care task done now (records history + updates lastDone). */
+  doTask: (id: string, type: CareType) => void;
+  /** Replace a plant's care tasks + watering reminder. */
+  updatePlantCare: (
+    id: string,
+    patch: { tasks: CareTask[]; reminderDays: Weekday[]; reminderTime: string },
+  ) => void;
   clearHistory: () => void;
   hasPlantNamed: (name: string) => boolean;
 }
@@ -27,12 +44,10 @@ export function usePlants(): {
 } {
   const [state, setState] = useState<AppState>(() => loadState());
 
-  // Persist on every change.
   useEffect(() => {
     saveState(state);
   }, [state]);
 
-  // Keep a ref so callbacks can read current plants without re-creating.
   const plantsRef = useRef(state.plants);
   plantsRef.current = state.plants;
 
@@ -53,9 +68,8 @@ export function usePlants(): {
         name: trimmed,
         species,
         emoji: "🪴",
-        intervalDays: 7,
-        lastWatered: null,
         image,
+        tasks: [waterTask(7)],
         reminderDays: [],
         reminderTime: DEFAULT_TIME,
       };
@@ -79,15 +93,13 @@ export function usePlants(): {
       name: preset.name,
       species: preset.species,
       emoji: preset.emoji,
-      intervalDays: preset.intervalDays,
-      lastWatered: null,
       image: null,
+      tasks: [waterTask(preset.intervalDays)],
       reminderDays: [],
       reminderTime: DEFAULT_TIME,
     };
     setState((s) => ({ ...s, plants: [...s.plants, plant] }));
 
-    // Fetch a photo in the background and patch it in.
     void lookupPlant(preset.wikiTitle).then((info) => {
       if (!info?.image) return;
       setState((s) => ({
@@ -103,7 +115,7 @@ export function usePlants(): {
     setState((s) => ({ ...s, plants: s.plants.filter((p) => p.id !== id) }));
   }, []);
 
-  const waterPlant: PlantActions["waterPlant"] = useCallback((id) => {
+  const doTask: PlantActions["doTask"] = useCallback((id, type) => {
     setState((s) => {
       const plant = s.plants.find((p) => p.id === id);
       if (!plant) return s;
@@ -112,19 +124,26 @@ export function usePlants(): {
         id: uid(),
         plantId: plant.id,
         plantName: plant.name,
-        emoji: plant.emoji,
+        taskType: type,
         at,
       };
       return {
         plants: s.plants.map((p) =>
-          p.id === id ? { ...p, lastWatered: at } : p,
+          p.id === id
+            ? {
+                ...p,
+                tasks: p.tasks.map((t) =>
+                  t.type === type ? { ...t, lastDone: at } : t,
+                ),
+              }
+            : p,
         ),
         history: [entry, ...s.history],
       };
     });
   }, []);
 
-  const updateSchedule: PlantActions["updateSchedule"] = useCallback(
+  const updatePlantCare: PlantActions["updatePlantCare"] = useCallback(
     (id, patch) => {
       setState((s) => ({
         ...s,
@@ -145,8 +164,8 @@ export function usePlants(): {
       addPreset,
       addCustomPlant,
       removePlant,
-      waterPlant,
-      updateSchedule,
+      doTask,
+      updatePlantCare,
       clearHistory,
       hasPlantNamed,
     },
