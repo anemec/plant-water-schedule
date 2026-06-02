@@ -33,7 +33,13 @@ html.xl-text {
 
 * { box-sizing: border-box; }
 
-html { font-size: var(--font-base); color-scheme: dark; }
+html {
+  font-size: var(--font-base);
+  color-scheme: dark;
+  /* Don't let mobile browsers auto-inflate our already-large text. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
 
 body {
   margin: 0;
@@ -42,6 +48,11 @@ body {
   color: var(--ink);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  /* Fill the small viewport (toolbars visible) on mobile, with a fallback. */
+  min-height: 100vh;
+  min-height: 100svh;
+  /* Softer tap flash on touch devices. */
+  -webkit-tap-highlight-color: rgba(41, 182, 246, 0.25);
 }
 
 h1, h2 { line-height: 1.2; }
@@ -74,20 +85,25 @@ h1, h2 { line-height: 1.2; }
   outline-offset: 2px;
 }
 
-/* --- Header --- */
+/* --- Header (sticky, notch-safe) --- */
 .app-header {
   background: var(--green-800);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.8rem 1.2rem;
-  flex-wrap: wrap;
   gap: 0.5rem;
+  /* Pad into the safe area so the title clears notches / status bars. */
+  padding: calc(0.7rem + env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right))
+           0.7rem max(1rem, env(safe-area-inset-left));
+  position: sticky;
+  top: 0;
+  z-index: 20;
 }
-.brand { display: flex; align-items: center; gap: 0.5rem; }
-.brand-leaf { font-size: 1.8rem; }
-.app-header h1 { margin: 0; font-size: 1.7rem; }
+.brand { display: flex; align-items: center; gap: 0.5rem; min-width: 0; }
+.brand-leaf { font-size: 1.6rem; }
+/* Fluid title: scales smoothly from small phones up to desktop. */
+.app-header h1 { margin: 0; font-size: clamp(1.35rem, 1rem + 2.5vw, 1.8rem); }
 
 .text-size-btn {
   background: #fff;
@@ -105,38 +121,55 @@ h1, h2 { line-height: 1.2; }
   border-color: #fff;
 }
 
-/* --- Tabs --- */
+/* --- Navigation ---
+   Mobile-first: a fixed bottom tab bar in the thumb-friendly zone.
+   On wider screens it moves up under the header (see min-width query). */
 .tabs {
   display: flex;
-  background: var(--green-600);
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  background: var(--green-800);
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  /* Lift content above the iOS home indicator. */
+  padding-bottom: env(safe-area-inset-bottom);
+  border-top: 2px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.4);
 }
 .tab-btn {
   flex: 1;
   background: transparent;
   color: #fff;
   border: none;
-  border-bottom: 6px solid transparent;
-  padding: 0.9rem 0.4rem;
-  font-size: 1.05rem;
+  border-top: 4px solid transparent;
+  /* Stack the icon over the label for a compact, tappable target. */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  padding: 0.5rem 0.25rem;
+  font-size: 0.8rem;
   font-weight: 700;
   cursor: pointer;
-  min-height: 56px;
+  min-height: 60px;
 }
-.tab-btn:hover { background: rgba(255, 255, 255, 0.15); }
+.tab-btn span[aria-hidden] { font-size: 1.5rem; line-height: 1; }
+.tab-btn:hover { background: rgba(255, 255, 255, 0.12); }
 .tab-btn.is-active {
-  background: var(--bg);
   color: var(--green-900);
-  border-bottom-color: var(--green-900);
+  border-top-color: var(--green-900);
+  background: rgba(165, 214, 167, 0.14);
 }
 
 /* --- Layout --- */
 main {
   max-width: 960px;
   margin: 0 auto;
-  padding: 1.2rem;
+  /* Mobile padding + room so content clears the fixed bottom nav. */
+  padding: 1rem max(1rem, env(safe-area-inset-right)) 1rem max(1rem, env(safe-area-inset-left));
+  padding-bottom: calc(76px + env(safe-area-inset-bottom));
 }
 .tab-panel { animation: fade 0.2s ease; }
 .tab-panel[hidden] { display: none; }
@@ -194,11 +227,11 @@ main {
 }
 .help { color: var(--muted); font-size: 0.9rem; margin: 0.3rem 0 0.8rem; }
 
-/* --- Plant grid --- */
+/* --- Plant grid (mobile-first: one column, widens on larger screens) --- */
 .plant-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.2rem;
+  grid-template-columns: 1fr;
+  gap: 1rem;
 }
 .plant-card {
   background: var(--paper);
@@ -257,10 +290,10 @@ main {
 }
 .icon-btn:hover { background: #d3ecd5; }
 
-/* --- Preset grid --- */
+/* --- Preset grid (mobile-first: two columns, auto-fills wider) --- */
 .preset-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 0.8rem;
 }
 .preset-btn {
@@ -387,12 +420,48 @@ input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1); }
   padding: 1.5rem;
   color: var(--muted);
   font-size: 0.9rem;
+  /* Hidden on mobile — the fixed bottom nav owns that space. */
+  display: none;
 }
 
-@media (max-width: 520px) {
-  .app-header h1 { font-size: 1.4rem; }
-  .tab-btn { font-size: 0.9rem; }
-  .plant-grid { grid-template-columns: 1fr; }
+/* ===========================================================
+   Progressive enhancement (mobile-first min-width breakpoints)
+   =========================================================== */
+
+/* Roomier phones / small tablets: multi-column card grids. */
+@media (min-width: 600px) {
+  .plant-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; }
+  .preset-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  main { padding-left: 1.2rem; padding-right: 1.2rem; }
+}
+
+/* Tablets / desktop: move the tab bar up under the header,
+   restore the footer, and use normal page padding. */
+@media (min-width: 768px) {
+  /* Let the tab bar be the only sticky element so they don't overlap. */
+  .app-header { position: static; }
+  .tabs {
+    position: sticky;
+    top: 0;
+    bottom: auto;
+    padding-bottom: 0;
+    border-top: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+    box-shadow: var(--card-shadow);
+  }
+  .tab-btn {
+    flex-direction: row;
+    gap: 0.4rem;
+    font-size: 1.05rem;
+    border-top: none;
+    border-bottom: 5px solid transparent;
+    min-height: 56px;
+  }
+  .tab-btn span[aria-hidden] { font-size: 1.15rem; }
+  .tab-btn.is-active { border-top: none; border-bottom-color: var(--green-900); }
+
+  main { padding: 1.4rem; padding-bottom: 1.4rem; }
+  .app-footer { display: block; }
 }
 
 @media (prefers-reduced-motion: reduce) {

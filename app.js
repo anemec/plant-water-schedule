@@ -509,7 +509,7 @@
       el = document.createElement("div");
       el.id = "toast";
       el.setAttribute("role", "status");
-      el.style.cssText = "position:fixed;left:50%;bottom:24px;transform:translateX(-50%);" +
+      el.style.cssText = "position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);" +
         "background:#1b5e20;color:#fff;padding:0.9rem 1.4rem;border-radius:12px;" +
         "font-weight:700;font-size:1.05rem;box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:200;" +
         "max-width:90%;text-align:center;";
