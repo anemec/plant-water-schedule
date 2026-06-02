@@ -1,19 +1,20 @@
 import type { CareType, Preset } from "../types";
+import type { IconName } from "../components/ui/Icon";
 
 /** Display metadata for each care task type. */
 export const CARE_META: Record<
   CareType,
-  { label: string; verb: string; emoji: string; defaultInterval: number }
+  { label: string; verb: string; icon: IconName; defaultInterval: number }
 > = {
-  water: { label: "Water", verb: "Watered", emoji: "💧", defaultInterval: 7 },
+  water: { label: "Water", verb: "Watered", icon: "water", defaultInterval: 7 },
   fertilize: {
     label: "Fertilize",
     verb: "Fertilized",
-    emoji: "🌱",
+    icon: "fertilize",
     defaultInterval: 30,
   },
-  rotate: { label: "Rotate", verb: "Rotated", emoji: "🔄", defaultInterval: 14 },
-  repot: { label: "Repot", verb: "Repotted", emoji: "🪴", defaultInterval: 365 },
+  rotate: { label: "Rotate", verb: "Rotated", icon: "rotate", defaultInterval: 14 },
+  repot: { label: "Repot", verb: "Repotted", icon: "repot", defaultInterval: 365 },
 };
 
 /** Care types in display order. */

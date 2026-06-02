@@ -4,6 +4,7 @@ import { CARE_META } from "../data/presets";
 import { Button } from "./ui/Button";
 import { EmptyState } from "./ui/EmptyState";
 import { ScreenHeader } from "./ui/ScreenHeader";
+import { Icon } from "./ui/Icon";
 import { WateringCan } from "./ui/illustrations";
 
 export function HistoryView({
@@ -19,13 +20,14 @@ export function HistoryView({
     <section aria-label="Care history" className="flex flex-col gap-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <ScreenHeader
-          icon="📋"
+          icon={<Icon name="history" />}
           title="History"
           subtitle="Everything you’ve done."
         />
         {history.length > 0 && (
           <Button variant="danger" onClick={onClear}>
-            🗑️ Clear
+            <Icon name="trash" className="size-6" />
+            Clear
           </Button>
         )}
       </div>
@@ -43,8 +45,8 @@ export function HistoryView({
                 key={entry.id}
                 className="animate-rise flex items-center gap-4 rounded-3xl border-2 border-line border-l-8 border-l-brand bg-surface px-5 py-4 shadow-md shadow-black/20"
               >
-                <span aria-hidden="true" className="text-4xl">
-                  {meta.emoji}
+                <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-brand/12 text-brand">
+                  <Icon name={meta.icon} className="size-7" />
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-xl font-bold">

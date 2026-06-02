@@ -1,12 +1,13 @@
 import { cn } from "../lib/util";
+import { Icon, type IconName } from "./ui/Icon";
 
 export type TabId = "plants" | "add" | "explore" | "history";
 
-const TABS: { id: TabId; label: string; icon: string }[] = [
-  { id: "plants", label: "Plants", icon: "🪴" },
-  { id: "add", label: "Add", icon: "➕" },
-  { id: "explore", label: "Explore", icon: "🌍" },
-  { id: "history", label: "History", icon: "📋" },
+const TABS: { id: TabId; label: string; icon: IconName }[] = [
+  { id: "plants", label: "Plants", icon: "plant" },
+  { id: "add", label: "Add", icon: "add" },
+  { id: "explore", label: "Explore", icon: "explore" },
+  { id: "history", label: "History", icon: "history" },
 ];
 
 export function TabBar({
@@ -39,9 +40,7 @@ export function TabBar({
                   : "border-line bg-surface-2 text-ink hover:border-brand",
               )}
             >
-              <span aria-hidden="true" className="text-2xl">
-                {tab.icon}
-              </span>
+              <Icon name={tab.icon} className="size-7" />
               <span className="text-sm">{tab.label}</span>
             </button>
           );

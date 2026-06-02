@@ -13,7 +13,10 @@ export function ScreenHeader({
   return (
     <div className="flex items-center gap-3">
       {icon && (
-        <span aria-hidden="true" className="text-4xl">
+        <span
+          aria-hidden="true"
+          className="grid size-12 shrink-0 place-items-center rounded-2xl bg-brand/12 text-3xl text-brand"
+        >
           {icon}
         </span>
       )}

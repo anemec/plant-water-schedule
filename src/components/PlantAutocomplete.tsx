@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { searchTaxa, type Taxon } from "../lib/inaturalist";
+import { Icon } from "./ui/Icon";
 
 /**
  * Accessible type-ahead search for plants, following the WAI-ARIA combobox
@@ -90,8 +91,12 @@ export function PlantAutocomplete({
         className="min-h-14 w-full rounded-xl2 border-2 border-line bg-canvas px-4 text-xl text-ink placeholder:text-ink-soft"
       />
       {loading && (
-        <p className="mt-2 text-base text-ink-soft" role="status">
-          🔎 Searching…
+        <p
+          className="mt-2 flex items-center gap-2 text-base text-ink-soft"
+          role="status"
+        >
+          <Icon name="search" className="size-5" />
+          Searching…
         </p>
       )}
 
@@ -132,9 +137,9 @@ export function PlantAutocomplete({
                 ) : (
                   <span
                     aria-hidden="true"
-                    className="grid size-14 shrink-0 place-items-center rounded-lg bg-surface-2 text-2xl"
+                    className="grid size-14 shrink-0 place-items-center rounded-lg bg-surface-2 text-brand"
                   >
-                    🪴
+                    <Icon name="leaf" className="size-7" />
                   </span>
                 )}
                 <span className="min-w-0">

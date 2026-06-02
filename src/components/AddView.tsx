@@ -7,6 +7,8 @@ import { cn } from "../lib/util";
 import { Button } from "./ui/Button";
 import { PlantAutocomplete } from "./PlantAutocomplete";
 import { ScreenHeader } from "./ui/ScreenHeader";
+import { Icon } from "./ui/Icon";
+import { PottedPlant } from "./ui/illustrations";
 
 export function AddView({
   actions,
@@ -21,7 +23,7 @@ export function AddView({
     const preset = PRESETS.find((p) => p.name === name);
     if (!preset) return;
     actions.addPreset(preset);
-    showToast(`${preset.name} added 🌱`);
+    showToast(`${preset.name} added`);
     onAdded();
   }
 
@@ -33,7 +35,7 @@ export function AddView({
       species: selected.scientificName,
       image: selected.photo,
     });
-    showToast(ok ? `${name} added 🌱` : `${name} is already in your list`);
+    showToast(ok ? `${name} added` : `${name} is already in your list`);
     if (ok) {
       setSelected(null);
       onAdded();
@@ -43,7 +45,7 @@ export function AddView({
   return (
     <section aria-label="Add a plant" className="flex flex-col gap-6">
       <ScreenHeader
-        icon="➕"
+        icon={<Icon name="add" />}
         title="Add a plant"
         subtitle="From the favorites, or search for any plant."
       />
@@ -64,26 +66,28 @@ export function AddView({
                 disabled={added}
                 onClick={() => addPreset(preset.name)}
                 className={cn(
-                  "flex min-h-16 items-center gap-4 rounded-xl2 border-2 px-5 text-left font-bold transition-colors",
+                  "flex min-h-16 items-center gap-4 rounded-2xl border-2 px-4 text-left font-bold transition-colors",
                   added
                     ? "cursor-default border-line bg-surface-2 text-ink-soft"
                     : "border-line bg-surface-2 text-ink hover:border-brand",
                 )}
               >
-                <span aria-hidden="true" className="text-4xl">
-                  {preset.emoji}
+                <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-brand/12 text-brand">
+                  <Icon name="leaf" className="size-7" />
                 </span>
                 <span className="flex-1">
                   <span className="block text-xl">{preset.name}</span>
-                  <span className="block text-base font-normal text-ink-soft">
-                    {added ? "Added ✓" : `Water every ${preset.intervalDays} days`}
+                  <span className="flex items-center gap-1 text-base font-normal text-ink-soft">
+                    {added ? (
+                      <>
+                        <Icon name="check" className="size-4" /> Added
+                      </>
+                    ) : (
+                      `Water every ${preset.intervalDays} days`
+                    )}
                   </span>
                 </span>
-                {!added && (
-                  <span aria-hidden="true" className="text-2xl">
-                    ➕
-                  </span>
-                )}
+                {!added && <Icon name="add" className="size-7 text-brand" />}
               </button>
             );
           })}
@@ -110,15 +114,12 @@ export function AddView({
                   className="size-24 shrink-0 rounded-xl object-cover"
                 />
               ) : (
-                <span
-                  aria-hidden="true"
-                  className="grid size-24 shrink-0 place-items-center rounded-xl bg-surface text-4xl"
-                >
-                  🪴
+                <span className="grid size-24 shrink-0 place-items-center rounded-xl bg-surface text-brand/70">
+                  <PottedPlant className="w-16" />
                 </span>
               )}
               <div className="min-w-0">
-                <p className="text-xl font-bold leading-tight">
+                <p className="font-display text-xl font-semibold leading-tight">
                   {selected.commonName ?? selected.scientificName}
                 </p>
                 {selected.commonName && (
@@ -129,7 +130,8 @@ export function AddView({
               </div>
             </div>
             <Button size="lg" variant="primary" onClick={addSelected}>
-              ➕ Add to my plants
+              <Icon name="add" className="size-6" />
+              Add to my plants
             </Button>
           </div>
         )}

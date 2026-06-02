@@ -6,6 +6,8 @@ import { cn } from "../lib/util";
 import { WaterBadge } from "./ui/Badge";
 import { WaterProgress } from "./ui/WaterProgress";
 import { Button } from "./ui/Button";
+import { Icon } from "./ui/Icon";
+import { PottedPlant } from "./ui/illustrations";
 
 const borderByUrgency = {
   ok: "border-line",
@@ -34,29 +36,26 @@ export function PlantCard({
   onRemove: (id: string) => void;
 }) {
   const tasks = orderedTasks(plant);
-  // Card border reflects the most urgent task.
   const mostUrgent = tasks.reduce<CareTask | null>(
     (acc, t) =>
       acc == null || daysUntilDue(t, now) < daysUntilDue(acc, now) ? t : acc,
     null,
   );
-  const borderUrgency = mostUrgent
-    ? careStatus(mostUrgent, now).urgency
-    : "ok";
+  const borderUrgency = mostUrgent ? careStatus(mostUrgent, now).urgency : "ok";
 
-  const reminder =
+  const reminderText =
     plant.reminderDays.length > 0
-      ? `🔔 ${plant.reminderDays
+      ? `${plant.reminderDays
           .slice()
           .sort((a, b) => a - b)
           .map((d) => WEEKDAY_LABELS[d])
           .join(", ")} at ${plant.reminderTime}`
-      : "🔕 No watering reminder";
+      : "No watering reminder";
 
   return (
     <article
       className={cn(
-        "overflow-hidden rounded-3xl border-2 bg-surface",
+        "animate-rise overflow-hidden rounded-3xl border-2 bg-surface shadow-lg shadow-black/25",
         borderByUrgency[borderUrgency],
       )}
     >
@@ -71,18 +70,20 @@ export function PlantCard({
         ) : (
           <div
             aria-hidden="true"
-            className="grid h-52 w-full place-items-center bg-gradient-to-br from-surface-2 to-surface text-7xl"
+            className="grid h-52 w-full place-items-center bg-gradient-to-br from-surface-2 to-surface"
           >
-            {plant.emoji}
+            <PottedPlant className="w-24 text-brand/70" />
           </div>
         )}
       </div>
 
       <div className="flex flex-col gap-4 p-5">
         <div>
-          <h3 className="text-2xl font-bold leading-tight">{plant.name}</h3>
+          <h3 className="font-display text-2xl font-semibold leading-tight">
+            {plant.name}
+          </h3>
           {plant.species && (
-            <p className="text-lg text-ink-soft">{plant.species}</p>
+            <p className="text-lg italic text-ink-soft">{plant.species}</p>
           )}
         </div>
 
@@ -95,7 +96,13 @@ export function PlantCard({
           />
         ))}
 
-        <p className="text-base text-ink-soft">{reminder}</p>
+        <p className="flex items-center gap-2 text-base text-ink-soft">
+          <Icon
+            name={plant.reminderDays.length > 0 ? "bell" : "bellOff"}
+            className="size-5 shrink-0"
+          />
+          {reminderText}
+        </p>
 
         <div className="grid grid-cols-2 gap-3">
           <Button
@@ -103,14 +110,16 @@ export function PlantCard({
             aria-label={`Edit care for ${plant.name}`}
             onClick={() => onEdit(plant.id)}
           >
-            ⚙️ Edit
+            <Icon name="edit" className="size-6" />
+            Edit
           </Button>
           <Button
             variant="secondary"
             aria-label={`Remove ${plant.name}`}
             onClick={() => onRemove(plant.id)}
           >
-            🗑️ Remove
+            <Icon name="trash" className="size-6" />
+            Remove
           </Button>
         </div>
       </div>
@@ -133,8 +142,9 @@ function TaskRow({
   return (
     <div className="rounded-2xl bg-surface-2 p-4">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-        <span className="text-lg font-bold">
-          <span aria-hidden="true">{meta.emoji}</span> {meta.label}
+        <span className="flex items-center gap-2 text-lg font-bold">
+          <Icon name={meta.icon} className="size-6 text-brand" />
+          {meta.label}
         </span>
         <WaterBadge urgency={status.urgency} label={status.label} />
       </div>
@@ -144,7 +154,8 @@ function TaskRow({
       </p>
       <div className="mt-3">
         <Button size="lg" variant="water" onClick={onDo}>
-          {meta.emoji} {meta.label} now
+          <Icon name={meta.icon} className="size-6" />
+          {meta.label} now
         </Button>
       </div>
     </div>

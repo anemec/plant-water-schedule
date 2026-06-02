@@ -78,6 +78,12 @@ for (const theme of ["dark", "light"] as const) {
     await page.getByRole("heading", { name: "Planty Care" }).waitFor();
     await shoot(page, `${theme}-plants-mobile`);
 
+    // Capture the bottom-sheet Edit dialog (no network needed).
+    await page.getByRole("button", { name: /edit care/i }).first().click();
+    await page.getByRole("heading", { name: /care for/i }).waitFor();
+    await page.screenshot({ path: `e2e/screenshots/${theme}-edit-sheet-mobile.png` });
+    await page.keyboard.press("Escape");
+
     const nav = page.getByRole("navigation", { name: /main sections/i });
     await nav.getByRole("button", { name: /add/i }).click();
     await shoot(page, `${theme}-add-mobile`);

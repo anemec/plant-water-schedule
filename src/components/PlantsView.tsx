@@ -11,6 +11,7 @@ import { ScheduleDialog } from "./ScheduleDialog";
 import { Button } from "./ui/Button";
 import { EmptyState } from "./ui/EmptyState";
 import { ScreenHeader } from "./ui/ScreenHeader";
+import { Icon } from "./ui/Icon";
 import { PottedPlant, Sprout } from "./ui/illustrations";
 
 export function PlantsView({
@@ -37,8 +38,7 @@ export function PlantsView({
   function handleDoTask(id: string, type: CareType) {
     const plant = plants.find((p) => p.id === id);
     actions.doTask(id, type);
-    if (plant)
-      showToast(`${CARE_META[type].verb} ${plant.name} ${CARE_META[type].emoji}`);
+    if (plant) showToast(`${CARE_META[type].verb} ${plant.name}`);
   }
 
   function handleRemove(id: string) {
@@ -51,7 +51,7 @@ export function PlantsView({
   return (
     <section aria-label="My plants" className="flex flex-col gap-5">
       <ScreenHeader
-        icon="🪴"
+        icon={<Icon name="plant" />}
         title="My plants"
         subtitle="Tap a task when it’s done."
       />
@@ -62,7 +62,8 @@ export function PlantsView({
           Plant your first green friend to get started.
           <div className="mt-5">
             <Button size="lg" onClick={onGoToAdd}>
-              ➕ Add a plant
+              <Icon name="add" className="size-6" />
+              Add a plant
             </Button>
           </div>
         </EmptyState>
@@ -135,8 +136,9 @@ function ReminderBanner({
 }) {
   if (permission === "granted") {
     return (
-      <p className="rounded-2xl border-2 border-brand bg-surface px-5 py-4 text-lg">
-        🔔 Reminders are on. Keep this page open to receive watering alerts.
+      <p className="flex items-center gap-2 rounded-2xl border-2 border-brand bg-surface px-5 py-4 text-lg">
+        <Icon name="bell" className="size-6 shrink-0 text-brand" />
+        Reminders are on. Keep this page open to receive watering alerts.
       </p>
     );
   }
@@ -153,7 +155,8 @@ function ReminderBanner({
     <div className="flex flex-col gap-3 rounded-2xl border-2 border-line bg-surface px-5 py-4">
       <p className="text-lg">Turn on reminders to get watering alerts.</p>
       <Button variant="primary" onClick={onEnable}>
-        🔔 Enable reminders
+        <Icon name="bell" className="size-6" />
+        Enable reminders
       </Button>
     </div>
   );

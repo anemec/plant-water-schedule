@@ -1,5 +1,6 @@
 import type { CareUrgency } from "../../types";
 import { cn } from "../../lib/util";
+import { Icon, type IconName } from "./Icon";
 
 /** Solid, high-contrast pills. Each on-* pairing is chosen for AAA contrast. */
 const styles: Record<CareUrgency, string> = {
@@ -9,11 +10,11 @@ const styles: Record<CareUrgency, string> = {
   overdue: "bg-danger text-on-danger",
 };
 
-const icons: Record<CareUrgency, string> = {
-  ok: "✓",
-  soon: "⏳",
-  due: "💧",
-  overdue: "⚠️",
+const icons: Record<CareUrgency, IconName> = {
+  ok: "check",
+  soon: "clock",
+  due: "water",
+  overdue: "warning",
 };
 
 export function WaterBadge({
@@ -26,13 +27,11 @@ export function WaterBadge({
   return (
     <span
       className={cn(
-        "inline-flex w-fit items-center gap-2 rounded-full px-4 py-1.5 text-lg font-bold",
+        "inline-flex w-fit items-center gap-1.5 rounded-full px-3.5 py-1.5 text-lg font-bold",
         styles[urgency],
       )}
     >
-      <span aria-hidden="true" className="text-xl">
-        {icons[urgency]}
-      </span>
+      <Icon name={icons[urgency]} className="size-5" />
       {label}
     </span>
   );

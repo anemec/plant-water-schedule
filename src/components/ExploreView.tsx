@@ -11,6 +11,8 @@ import { PlantAutocomplete } from "./PlantAutocomplete";
 import { Button } from "./ui/Button";
 import { Sheet } from "./ui/Sheet";
 import { ScreenHeader } from "./ui/ScreenHeader";
+import { Icon } from "./ui/Icon";
+import { PottedPlant } from "./ui/illustrations";
 
 export function ExploreView({ actions }: { actions: PlantActions }) {
   const [featured, setFeatured] = useState<Taxon[] | null>(null);
@@ -30,7 +32,7 @@ export function ExploreView({ actions }: { actions: PlantActions }) {
   return (
     <section aria-label="Explore plants" className="flex flex-col gap-6">
       <ScreenHeader
-        icon="🌍"
+        icon={<Icon name="explore" />}
         title="Explore"
         subtitle="A living encyclopedia — search or tap to learn."
       />
@@ -41,7 +43,7 @@ export function ExploreView({ actions }: { actions: PlantActions }) {
       />
 
       {featured === null ? (
-        <p className="text-lg text-ink-soft">🌱 Gathering a few favorites…</p>
+        <p className="text-lg text-ink-soft">Gathering a few favorites…</p>
       ) : featured.length === 0 ? (
         <p className="text-lg text-ink-soft">
           Couldn’t reach the plant library — check your connection and try again.
@@ -59,7 +61,7 @@ export function ExploreView({ actions }: { actions: PlantActions }) {
             ))}
           </div>
           <p className="text-center text-sm text-ink-soft">
-            Photos &amp; data from the iNaturalist community 🌿
+            Photos &amp; data from the iNaturalist community
           </p>
         </>
       )}
@@ -75,7 +77,7 @@ export function ExploreView({ actions }: { actions: PlantActions }) {
           });
           showToast(
             ok
-              ? `${t.commonName ?? t.scientificName} added 🌱`
+              ? `${t.commonName ?? t.scientificName} added`
               : "Already in your plants",
           );
         }}
@@ -98,8 +100,9 @@ function HeroCard({ taxon, onOpen }: { taxon: Taxon; onOpen: () => void }) {
             alt={`Photo of ${taxon.commonName ?? taxon.scientificName}`}
             className="h-full w-full object-cover"
           />
-          <span className="absolute left-3 top-3 rounded-full bg-accent px-3 py-1 text-base font-bold text-on-accent">
-            ✦ Featured
+          <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 text-base font-bold text-on-accent">
+            <Icon name="sparkle" className="size-4" />
+            Featured
           </span>
         </div>
       )}
@@ -133,8 +136,8 @@ function GalleryCard({ taxon, onOpen }: { taxon: Taxon; onOpen: () => void }) {
           className="h-32 w-full object-cover"
         />
       ) : (
-        <div className="grid h-32 w-full place-items-center bg-surface-2 text-4xl">
-          🪴
+        <div className="grid h-32 w-full place-items-center bg-surface-2 text-brand/70">
+          <PottedPlant className="w-16" />
         </div>
       )}
       <span className="p-3 text-lg font-bold leading-tight">
@@ -173,7 +176,7 @@ function DetailSheet({
 
   return (
     <Sheet open={id != null} onClose={onClose} ariaLabel="Plant details">
-      {loading && <p className="p-6 text-lg text-ink-soft">🌱 Loading…</p>}
+      {loading && <p className="p-6 text-lg text-ink-soft">Loading…</p>}
       {!loading && !detail && (
         <p className="p-6 text-lg text-ink-soft">Couldn’t load this plant.</p>
       )}
@@ -202,18 +205,22 @@ function DetailSheet({
               <p className="text-lg leading-relaxed">{detail.summary}</p>
             )}
             {detail.observations != null && (
-              <p className="text-base text-ink-soft">
-                👁 {detail.observations.toLocaleString()} observations on
-                iNaturalist
+              <p className="flex items-center gap-2 text-base text-ink-soft">
+                <Icon name="eye" className="size-5 shrink-0" />
+                {detail.observations.toLocaleString()} observations on iNaturalist
               </p>
             )}
             {detail.photoAttribution && (
-              <p className="text-sm text-ink-soft">📷 {detail.photoAttribution}</p>
+              <p className="flex items-start gap-2 text-sm text-ink-soft">
+                <Icon name="camera" className="size-4 shrink-0 translate-y-0.5" />
+                {detail.photoAttribution}
+              </p>
             )}
 
             <div className="mt-1 flex flex-col gap-3">
               <Button size="lg" variant="primary" onClick={() => onAdd(detail)}>
-                ➕ Add to my plants
+                <Icon name="add" className="size-6" />
+                Add to my plants
               </Button>
               <div className="grid grid-cols-2 gap-3">
                 {detail.wikipediaUrl && (
@@ -221,9 +228,10 @@ function DetailSheet({
                     href={detail.wikipediaUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex min-h-13 items-center justify-center rounded-xl2 border-2 border-line bg-surface-2 px-5 text-lg font-bold text-ink hover:border-brand"
+                    className="inline-flex min-h-13 items-center justify-center gap-2 rounded-xl2 border-2 border-line bg-surface-2 px-5 text-lg font-bold text-ink hover:border-brand"
                   >
-                    📖 Wikipedia
+                    <Icon name="book" className="size-6" />
+                    Wikipedia
                   </a>
                 )}
                 <Button

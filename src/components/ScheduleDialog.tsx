@@ -4,6 +4,7 @@ import { CARE_META, CARE_TYPES, WEEKDAY_LABELS } from "../data/presets";
 import { cn } from "../lib/util";
 import { Button } from "./ui/Button";
 import { Sheet } from "./ui/Sheet";
+import { Icon } from "./ui/Icon";
 
 const ALL_DAYS: Weekday[] = [0, 1, 2, 3, 4, 5, 6];
 
@@ -114,7 +115,8 @@ export function ScheduleDialog({
                     onChange={(e) => setDraft(type, { enabled: e.target.checked })}
                     className="size-6 accent-brand"
                   />
-                  <span aria-hidden="true">{meta.emoji}</span> {meta.label}
+                  <Icon name={meta.icon} className="size-6 text-brand" />
+                  {meta.label}
                   {locked && (
                     <span className="text-base font-normal text-ink-soft">
                       (always on)
@@ -181,7 +183,8 @@ export function ScheduleDialog({
             Cancel
           </Button>
           <Button type="submit" variant="primary">
-            💾 Save
+            <Icon name="check" className="size-6" />
+            Save
           </Button>
         </div>
       </form>
