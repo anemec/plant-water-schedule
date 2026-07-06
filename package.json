@@ -1,9 +1,9 @@
 {
-  "name": "planty-care",
+  "name": "hendrick-hamel-journal",
   "private": true,
-  "version": "2.0.0",
+  "version": "1.0.0",
   "type": "module",
-  "description": "Planty Care — track plant watering schedules, reminders, and history.",
+  "description": "A modern, mobile-friendly presentation of the journal of Hendrick Hamel — the first Western account of Korea, 1653–1666.",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

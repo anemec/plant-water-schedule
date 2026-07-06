@@ -3,26 +3,39 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="description" content="Planty Care — an accessible app to track plant watering schedules, reminders, and history." />
-    <meta name="theme-color" content="#12180f" />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌱%3C/text%3E%3C/svg%3E" />
+    <meta
+      name="description"
+      content="The Journal of Hendrick Hamel — the first Western eyewitness account of Korea, told by a Dutch sailor shipwrecked in Joseon from 1653 to 1666."
+    />
+    <meta name="theme-color" content="#0d1620" />
+
+    <!-- Open Graph / social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="The Journal of Hendrick Hamel" />
+    <meta
+      property="og:description"
+      content="Shipwrecked in the Hermit Kingdom, 1653–1666 — the first Western account of Korea."
+    />
+
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d9a441' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='m15.5 8.5-2 5-5 2 2-5 5-2Z'/%3E%3C/svg%3E"
+    />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap"
       rel="stylesheet"
     />
-    <title>Planty Care 🌱</title>
+
+    <title>The Journal of Hendrick Hamel</title>
     <script>
-      // Apply the saved theme + text size before first paint to avoid a flash.
+      // Apply the saved theme before first paint to avoid a flash.
       (function () {
         try {
-          var t = localStorage.getItem("plantycare.theme") || "dark";
+          var t = localStorage.getItem("hamel.theme") || "dark";
           document.documentElement.setAttribute("data-theme", t);
-          var s = localStorage.getItem("plantycare.textScale") || "normal";
-          if (s !== "normal") {
-            document.documentElement.classList.add("scale-" + s);
-          }
         } catch (e) {
           document.documentElement.setAttribute("data-theme", "dark");
         }

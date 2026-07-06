@@ -2,23 +2,31 @@ import { useCallback, useEffect, useState } from "react";
 
 export type Theme = "dark" | "light";
 
-const KEY = "plantycare.theme";
+const KEY = "hamel.theme";
 
 function initialTheme(): Theme {
-  const saved = localStorage.getItem(KEY);
-  return saved === "light" ? "light" : "dark"; // default dark
+  if (typeof document !== "undefined") {
+    const attr = document.documentElement.getAttribute("data-theme");
+    if (attr === "light" || attr === "dark") return attr;
+  }
+  return "dark";
 }
 
-/**
- * Light/dark theme, defaulting to dark. Applies [data-theme] on <html>
- * (see index.css) and remembers the choice.
- */
-export function useTheme(): { theme: Theme; toggle: () => void } {
+/** Reads/writes the site theme, mirroring it onto <html data-theme>. */
+export function useTheme() {
   const [theme, setTheme] = useState<Theme>(initialTheme);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem(KEY, theme);
+    try {
+      localStorage.setItem(KEY, theme);
+    } catch {
+      /* storage may be unavailable; ignore */
+    }
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+      meta.setAttribute("content", theme === "dark" ? "#0d1620" : "#f2e9d6");
+    }
   }, [theme]);
 
   const toggle = useCallback(

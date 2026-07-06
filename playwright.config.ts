@@ -1,7 +1,14 @@
 import { defineConfig, devices } from "@playwright/test";
+import { existsSync } from "node:fs";
 
 const PORT = 4173;
 const baseURL = `http://localhost:${PORT}`;
+
+// Some sandboxed environments pre-install Chromium at a fixed path whose
+// version may not match what @playwright/test expects. Use it when present;
+// in CI the workflow runs `playwright install`, so let Playwright resolve it.
+const localChromium = "/opt/pw-browsers/chromium";
+const executablePath = existsSync(localChromium) ? localChromium : undefined;
 
 /**
  * E2E + screenshot tests. These need a real browser, so they run in CI
@@ -21,7 +28,10 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   projects: [
-    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    {
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"], launchOptions: { executablePath } },
+    },
   ],
   // Build once, then preview the static output (closest to production).
   webServer: {

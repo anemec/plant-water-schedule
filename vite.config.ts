@@ -15,19 +15,18 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["pwa-icon.svg"],
+      includeAssets: ["favicon.svg"],
       manifest: {
-        name: "Planty Care",
-        short_name: "Planty Care",
+        name: "The Journal of Hendrick Hamel",
+        short_name: "Hamel's Journal",
         description:
-          "Track plant watering and care schedules, reminders, and history.",
-        theme_color: "#14191b",
-        background_color: "#14191b",
+          "The first Western eyewitness account of Korea — a Dutch sailor's record of thirteen years shipwrecked in Joseon, 1653–1666.",
+        theme_color: "#0d1620",
+        background_color: "#0d1620",
         display: "standalone",
-        orientation: "portrait",
         icons: [
           {
-            src: "pwa-icon.svg",
+            src: "favicon.svg",
             sizes: "any",
             type: "image/svg+xml",
             purpose: "any maskable",
@@ -36,19 +35,6 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,woff2}"],
-        runtimeCaching: [
-          {
-            // Cache iNaturalist photos so previously-viewed plants work offline.
-            urlPattern:
-              /^https:\/\/(static\.inaturalist\.org|inaturalist-open-data\.s3\.amazonaws\.com)\/.*/i,
-            handler: "CacheFirst",
-            options: {
-              cacheName: "inat-photos",
-              expiration: { maxEntries: 120, maxAgeSeconds: 60 * 60 * 24 * 30 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
-        ],
       },
     }),
   ],

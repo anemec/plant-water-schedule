@@ -1,18 +1,17 @@
 @import "tailwindcss";
 
-/* ===========================================================
-   Planty Care — "Conservatory" design system
-   Warm botanical theme. Built for a low-vision (glaucoma) user:
-   AAA contrast (>=7:1), large type, dark default + light, with
-   trendy depth/texture/motion applied surgically so text always
-   sits on solid, high-contrast surfaces.
-   =========================================================== */
+/* ============================================================
+   The Journal of Hendrick Hamel — design system
+   A modern, mobile-first editorial reading experience with a
+   17th-century cartographer's palette: sea-ink, parchment, brass.
+   Dark (midnight chart) is default; light (parchment) available.
+   ============================================================ */
 
 @theme inline {
-  --font-sans: "Atkinson Hyperlegible", ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", sans-serif;
-  /* Editorial display serif for large headings only. */
   --font-display: "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
+  --font-serif: "Newsreader", ui-serif, Georgia, "Times New Roman", serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    sans-serif;
 
   --color-canvas: var(--c-canvas);
   --color-surface: var(--c-surface);
@@ -20,178 +19,180 @@
   --color-line: var(--c-line);
   --color-ink: var(--c-ink);
   --color-ink-soft: var(--c-ink-soft);
-
-  --color-brand: var(--c-brand);
-  --color-on-brand: var(--c-on-brand);
-  --color-accent: var(--c-accent);
-  --color-on-accent: var(--c-on-accent);
-  --color-water: var(--c-water);
-  --color-on-water: var(--c-on-water);
-  --color-danger: var(--c-danger);
-  --color-on-danger: var(--c-on-danger);
+  --color-ink-faint: var(--c-ink-faint);
+  --color-brass: var(--c-brass);
+  --color-brass-soft: var(--c-brass-soft);
+  --color-sea: var(--c-sea);
   --color-focus: var(--c-focus);
 
-  --radius-xl2: 1.25rem;
-  --radius-3xl: 1.75rem;
+  --radius-lg: 0.85rem;
+  --radius-xl: 1.15rem;
+  --radius-2xl: 1.6rem;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.28), 0 12px 32px -12px rgb(0 0 0 / 0.5);
 }
 
-/* ----- Dark theme (default): warm near-black greenhouse ----- */
+/* ---- Dark theme (default): a midnight sea chart ---- */
 :root,
 :root[data-theme="dark"] {
-  --c-canvas: #12180f;
-  --c-surface: #1c2616;
-  --c-surface-2: #26331d;
-  --c-line: #3a4a2e;
-  --c-ink: #f2f5ea;
-  --c-ink-soft: #cbd6bb;
-
-  --c-brand: #6cc06c; /* leaf green (fills) */
-  --c-on-brand: #0c1f0c;
-  --c-accent: #e2a05a; /* terracotta (fills/borders only) */
-  --c-on-accent: #2a1606;
-  --c-water: #5bb8e6;
-  --c-on-water: #04222e;
-  --c-danger: #f0907f;
-  --c-on-danger: #340a06;
-  --c-focus: #ffd23f;
+  --c-canvas: #0d1620;
+  --c-surface: #142230;
+  --c-surface-2: #1c2f40;
+  --c-line: #2b4155;
+  --c-ink: #f3ede0;
+  --c-ink-soft: #c4cdd6;
+  --c-ink-faint: #93a3b3;
+  --c-brass: #d9a441;
+  --c-brass-soft: #b9863a;
+  --c-sea: #4aa3c7;
+  --c-focus: #ffcf5c;
+  color-scheme: dark;
 }
 
-/* ----- Light theme: warm paper ----- */
+/* ---- Light theme: aged parchment ---- */
 :root[data-theme="light"] {
-  --c-canvas: #f3efe4;
-  --c-surface: #fbf9f1;
-  --c-surface-2: #e8e1d0;
-  --c-line: #cdc4ad;
-  --c-ink: #1b2113;
-  --c-ink-soft: #434a32;
-
-  --c-brand: #0f5f34;
-  --c-on-brand: #ffffff;
-  --c-accent: #9a4f1f;
-  --c-on-accent: #ffffff;
-  --c-water: #0a5f86;
-  --c-on-water: #ffffff;
-  --c-danger: #a4231b;
-  --c-on-danger: #ffffff;
-  --c-focus: #0b3d91;
+  --c-canvas: #f2e9d6;
+  --c-surface: #faf3e3;
+  --c-surface-2: #f0e4cb;
+  --c-line: #d8c6a2;
+  --c-ink: #241a0f;
+  --c-ink-soft: #4b3d29;
+  --c-ink-faint: #7a6a50;
+  --c-brass: #9a6a1e;
+  --c-brass-soft: #b07f2b;
+  --c-sea: #1d6f8f;
+  --c-focus: #8a5a12;
+  color-scheme: light;
 }
 
-/* ----- Text scale (set on <html>; remembered) ----- */
+* {
+  border-color: var(--c-line);
+}
+
 html {
-  font-size: 20px;
-  scroll-padding-top: 6.5rem;
-  color-scheme: dark light;
+  scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
 }
-html.scale-large {
-  font-size: 24px;
-}
-html.scale-xlarge {
-  font-size: 28px;
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 body {
   margin: 0;
-  min-height: 100svh;
-  color: var(--color-ink);
-  font-family: var(--font-sans);
-  line-height: 1.6;
-  letter-spacing: 0.01em;
+  background-color: var(--c-canvas);
+  color: var(--c-ink);
+  font-family: var(--font-serif);
+  font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
-  -webkit-tap-highlight-color: transparent;
-  /* Warm glows + a faint grain for botanical depth. Text sits on solid
-     surface cards, so contrast is unaffected. */
-  background-color: var(--color-canvas);
-  background-image:
-    radial-gradient(
-      55rem 38rem at 108% -8%,
-      color-mix(in oklab, var(--c-brand) 18%, transparent),
-      transparent 60%
-    ),
-    radial-gradient(
-      48rem 32rem at -12% 108%,
-      color-mix(in oklab, var(--c-accent) 14%, transparent),
-      transparent 60%
-    ),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
-  background-attachment: fixed, fixed, fixed;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
 }
 
-/* Display headings */
-.font-display {
-  font-family: var(--font-display);
-  letter-spacing: -0.01em;
+/* Subtle chart/parchment glow painted behind everything. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      120% 80% at 80% -10%,
+      color-mix(in oklab, var(--c-brass) 12%, transparent),
+      transparent 55%
+    ),
+    radial-gradient(
+      100% 70% at -10% 100%,
+      color-mix(in oklab, var(--c-sea) 14%, transparent),
+      transparent 55%
+    );
 }
 
-:focus-visible {
-  outline: 4px solid var(--color-focus);
-  outline-offset: 3px;
-  border-radius: 8px;
-}
 ::selection {
-  background: var(--color-brand);
-  color: var(--color-on-brand);
+  background: color-mix(in oklab, var(--c-brass) 40%, transparent);
+  color: var(--c-ink);
 }
 
-@utility pt-safe {
-  padding-top: env(safe-area-inset-top);
-}
-@utility pb-safe {
-  padding-bottom: env(safe-area-inset-bottom);
+:where(a, button, [tabindex]):focus-visible {
+  outline: 3px solid var(--c-focus);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
-/* ----- Motion (all gated by prefers-reduced-motion below) ----- */
-@keyframes sheet-up {
-  from {
-    transform: translateY(100%);
+/* ---------- Reusable component classes ---------- */
+
+@layer components {
+  .u-wrap {
+    width: 100%;
+    max-width: 68rem;
+    margin-inline: auto;
+    padding-inline: clamp(1.15rem, 5vw, 2.5rem);
   }
-  to {
-    transform: translateY(0);
+
+  .u-prose {
+    max-width: 42rem;
   }
-}
-@keyframes backdrop-in {
-  from {
+
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--c-brass);
+  }
+  .kicker::before {
+    content: "";
+    width: 1.9rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.7;
+  }
+
+  .card {
+    background: color-mix(in oklab, var(--c-surface) 92%, transparent);
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+
+  /* Fade/slide-in on scroll; disabled for reduced motion. */
+  .reveal {
     opacity: 0;
+    transform: translateY(22px);
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
   }
-  to {
+  .reveal.is-visible {
     opacity: 1;
+    transform: none;
   }
-}
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-@keyframes pop {
-  0% {
-    transform: scale(0.9);
-  }
-  60% {
-    transform: scale(1.06);
-  }
-  100% {
-    transform: scale(1);
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
 }
 
-.animate-rise {
-  animation: rise 0.32s ease both;
-}
-.animate-pop {
-  animation: pop 0.4s ease both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    transition-duration: 0.001ms !important;
-  }
+/* Drop cap for the opening chapter paragraph. */
+.dropcap::first-letter {
+  font-family: var(--font-display);
+  font-weight: 600;
+  float: left;
+  font-size: 3.4em;
+  line-height: 0.72;
+  padding: 0.08em 0.12em 0 0;
+  color: var(--c-brass);
 }

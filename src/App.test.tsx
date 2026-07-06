@@ -1,61 +1,43 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { render, screen, within } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { describe, it, expect } from "vitest";
+import { render, screen } from "@testing-library/react";
 import App from "./App";
+import { TIMELINE, KINGDOM_TOPICS, CHAPTERS } from "./data/content";
 
-describe("App (integration)", () => {
-  beforeEach(() => {
-    localStorage.clear();
-    // No real network for the preset background photo fetch.
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue({ ok: false, json: () => Promise.resolve({}) }),
-    );
-  });
-
-  it("shows an empty state and can add a preset plant end-to-end", async () => {
-    const user = userEvent.setup();
+describe("App", () => {
+  it("renders the site title and subtitle", () => {
     render(<App />);
-
-    expect(screen.getByText(/no plants yet/i)).toBeInTheDocument();
-
-    // Go to the Add tab and quick-add Pothos.
-    const nav = screen.getByRole("navigation", { name: /main sections/i });
-    await user.click(within(nav).getByRole("button", { name: /add/i }));
-
-    await user.click(screen.getByRole("button", { name: /pothos/i }));
-
-    // We're returned to My Plants and the card is shown.
     expect(
-      await screen.findByRole("heading", { name: "Pothos" }),
+      screen.getByRole("heading", { level: 1, name: /Hendrick Hamel/i }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /water now/i })).toBeInTheDocument();
+    expect(screen.getByText(/Shipwrecked in the Hermit Kingdom/i)).toBeInTheDocument();
   });
 
-  it("waters a plant and logs it in history", async () => {
-    const user = userEvent.setup();
+  it("renders the primary navigation sections", () => {
     render(<App />);
-
-    const nav = screen.getByRole("navigation", { name: /main sections/i });
-    await user.click(within(nav).getByRole("button", { name: /add/i }));
-    await user.click(screen.getByRole("button", { name: /monstera/i }));
-
-    await user.click(await screen.findByRole("button", { name: /water now/i }));
-
-    await user.click(within(nav).getByRole("button", { name: /history/i }));
-    // Scope to the history list so the toast ("Watered Monstera") doesn't
-    // double-match.
-    const historyList = screen.getByRole("list");
-    expect(within(historyList).getByText(/watered monstera/i)).toBeInTheDocument();
-    expect(within(historyList).getByText(/today/i)).toBeInTheDocument();
+    // Section headings from each major block.
+    expect(screen.getByText(/What Hamel recorded of Joseon/i)).toBeInTheDocument();
+    expect(screen.getByText(/A castaway's course/i)).toBeInTheDocument();
   });
 
-  it("toggles the theme from the header control", async () => {
-    const user = userEvent.setup();
+  it("renders every timeline entry", () => {
     render(<App />);
+    for (const entry of TIMELINE) {
+      expect(screen.getByText(entry.title)).toBeInTheDocument();
+    }
+  });
 
-    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
-    await user.click(screen.getByRole("button", { name: /switch to light mode/i }));
-    expect(document.documentElement.getAttribute("data-theme")).toBe("light");
+  it("renders every kingdom topic and story chapter", () => {
+    render(<App />);
+    for (const t of KINGDOM_TOPICS) {
+      expect(screen.getByText(t.title)).toBeInTheDocument();
+    }
+    for (const c of CHAPTERS) {
+      expect(screen.getByText(c.title)).toBeInTheDocument();
+    }
+  });
+
+  it("provides a skip-to-content link for accessibility", () => {
+    render(<App />);
+    expect(screen.getByText(/Skip to content/i)).toBeInTheDocument();
   });
 });

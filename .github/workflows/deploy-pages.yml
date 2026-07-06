@@ -1,4 +1,4 @@
-name: Deploy Planty Care to GitHub Pages
+name: Deploy Hamel's Journal to GitHub Pages
 
 on:
   push:

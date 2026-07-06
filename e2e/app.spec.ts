@@ -1,45 +1,50 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Planty Care", () => {
-  test("adds a preset plant end-to-end", async ({ page }) => {
+test.describe("The Journal of Hendrick Hamel", () => {
+  test("loads with the correct title and hero", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByText(/no plants yet/i)).toBeVisible();
-
-    const nav = page.getByRole("navigation", { name: /main sections/i });
-    await nav.getByRole("button", { name: /add/i }).click();
-    await page.getByRole("button", { name: /pothos/i }).click();
-
-    await expect(page.getByRole("heading", { name: "Pothos" })).toBeVisible();
+    await expect(page).toHaveTitle(/Hendrick Hamel/i);
+    await expect(
+      page.getByRole("heading", { level: 1, name: /Hendrick Hamel/i }),
+    ).toBeVisible();
+    await expect(
+      page.getByText(/Shipwrecked in the Hermit Kingdom/i),
+    ).toBeVisible();
   });
 
-  test("waters a plant and records it in history", async ({ page }) => {
+  test("shows the main content sections", async ({ page }) => {
     await page.goto("/");
-    const nav = page.getByRole("navigation", { name: /main sections/i });
-
-    await nav.getByRole("button", { name: /add/i }).click();
-    await page.getByRole("button", { name: /monstera/i }).click();
-    await page.getByRole("button", { name: /water now/i }).click();
-
-    await nav.getByRole("button", { name: /history/i }).click();
-    // Scope to the history list so the "Watered Monstera 💧" toast (which also
-    // contains "Monstera") doesn't cause a strict-mode match.
-    const historyList = page.getByRole("list");
-    await expect(historyList.getByText(/watered monstera/i)).toBeVisible();
-    await expect(historyList.getByText(/today/i)).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /What Hamel recorded of Joseon/i }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /A castaway's course/i }),
+    ).toBeVisible();
   });
 
-  test("toggles between dark and light themes", async ({ page }) => {
+  test("theme toggle switches between dark and light", async ({ page }) => {
     await page.goto("/");
     const html = page.locator("html");
     await expect(html).toHaveAttribute("data-theme", "dark");
-
-    await page.getByRole("button", { name: /switch to light mode/i }).click();
+    await page.getByRole("button", { name: /Switch to light theme/i }).click();
     await expect(html).toHaveAttribute("data-theme", "light");
   });
 
-  test("changes the text size", async ({ page }) => {
+  test("desktop navigation jumps to a section", async ({ page }) => {
+    await page.setViewportSize({ width: 1200, height: 900 });
     await page.goto("/");
-    await page.getByRole("button", { name: /change text size/i }).click();
-    await expect(page.locator("html")).toHaveClass(/scale-large/);
+    await page.getByRole("link", { name: "Timeline", exact: true }).click();
+    await expect(page).toHaveURL(/#timeline$/);
+    await expect(
+      page.getByRole("heading", { name: /A castaway's course/i }),
+    ).toBeInViewport();
+  });
+
+  test("mobile menu opens and navigates", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+    await page.getByRole("button", { name: /Open menu/i }).click();
+    await page.getByRole("link", { name: "The Kingdom", exact: true }).click();
+    await expect(page).toHaveURL(/#kingdom$/);
   });
 });

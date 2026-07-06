@@ -1,70 +1,49 @@
-import { useEffect, useState } from "react";
-import { usePlants } from "./hooks/usePlants";
+import { Nav, type NavLink } from "./components/Nav";
+import { Hero } from "./components/Hero";
+import { Story } from "./components/Story";
+import { Timeline } from "./components/Timeline";
+import { Kingdom } from "./components/Kingdom";
+import { Legacy } from "./components/Legacy";
+import { Footer } from "./components/Footer";
 import { useTheme } from "./hooks/useTheme";
-import { useTextScale } from "./hooks/useTextScale";
-import { useReminders } from "./hooks/useReminders";
-import { Header } from "./components/Header";
-import { TabBar, type TabId } from "./components/TabBar";
-import { PlantsView } from "./components/PlantsView";
-import { AddView } from "./components/AddView";
-import { ExploreView } from "./components/ExploreView";
-import { HistoryView } from "./components/HistoryView";
-import { ToastHost } from "./components/ui/ToastHost";
+import { useActiveSection, useScrollProgress } from "./hooks/useScroll";
+
+const LINKS: NavLink[] = [
+  { id: "story", label: "The Story" },
+  { id: "timeline", label: "Timeline" },
+  { id: "kingdom", label: "The Kingdom" },
+  { id: "legacy", label: "Legacy" },
+  { id: "about", label: "About" },
+];
 
 export default function App() {
-  const { plants, history, actions } = usePlants();
-  const { theme, toggle: toggleTheme } = useTheme();
-  const { scale, cycle: cycleScale } = useTextScale();
-  const { permission, enable } = useReminders(plants);
-  const [tab, setTab] = useState<TabId>("plants");
-
-  // Re-render once a minute so "days until due" stays current.
-  const [now, setNow] = useState(() => Date.now());
-  useEffect(() => {
-    const id = window.setInterval(() => setNow(Date.now()), 60_000);
-    return () => window.clearInterval(id);
-  }, []);
+  const { theme, toggle } = useTheme();
+  const progress = useScrollProgress();
+  const active = useActiveSection(LINKS.map((l) => l.id));
 
   return (
-    <div className="min-h-svh">
-      <Header
+    <>
+      <a
+        href="#story"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-3 focus:z-[60] focus:rounded-full focus:bg-brass focus:px-4 focus:py-2 focus:font-sans focus:text-sm focus:font-semibold focus:text-[#1a1206]"
+      >
+        Skip to content
+      </a>
+      <Nav
+        links={LINKS}
+        active={active}
+        progress={progress}
         theme={theme}
-        onToggleTheme={toggleTheme}
-        scale={scale}
-        onCycleScale={cycleScale}
+        onToggleTheme={toggle}
       />
-      <TabBar active={tab} onChange={setTab} />
-
-      {/* Single, centered, narrow column — friendly to a narrow visual field. */}
-      <main className="mx-auto max-w-xl px-4 py-6 pb-24">
-        {tab === "plants" && (
-          <PlantsView
-            plants={plants}
-            now={now}
-            actions={actions}
-            permission={permission}
-            onEnableReminders={() => void enable()}
-            onGoToAdd={() => setTab("add")}
-          />
-        )}
-        {tab === "add" && (
-          <AddView actions={actions} onAdded={() => setTab("plants")} />
-        )}
-        {tab === "explore" && <ExploreView actions={actions} />}
-        {tab === "history" && (
-          <HistoryView
-            history={history}
-            now={now}
-            onClear={() => {
-              if (window.confirm("Clear the entire watering history?")) {
-                actions.clearHistory();
-              }
-            }}
-          />
-        )}
+      <main>
+        <Hero />
+        <Story />
+        <Timeline />
+        <Kingdom />
+        <Legacy />
       </main>
-
-      <ToastHost />
-    </div>
+      <Footer />
+    </>
   );
 }

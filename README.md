@@ -1,116 +1,75 @@
-# 🌱 Planty Care
+# The Journal of Hendrick Hamel
 
-A friendly app to track plant watering schedules, set reminders, and keep a
-history of every watering. Built as a fast, accessible single-page app and
-deployed to **GitHub Pages**.
+A modern, mobile-friendly retelling of the story of **Hendrick Hamel** — the
+Dutch East India Company bookkeeper who was shipwrecked on Jeju in 1653 and
+held in the kingdom of Joseon for thirteen years. On his escape he wrote the
+**first Western eyewitness account of Korea** (published 1668).
 
-![Tech](https://img.shields.io/badge/React-19-149eca) ![Tech](https://img.shields.io/badge/TypeScript-strict-3178c6) ![Tech](https://img.shields.io/badge/Tailwind-v4-38bdf8) ![Tests](https://img.shields.io/badge/tests-Vitest-6da744)
+Built as a fast, accessible single-page site and deployed to **GitHub Pages**.
+
+![React](https://img.shields.io/badge/React-19-149eca) ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6) ![Tailwind](https://img.shields.io/badge/Tailwind-v4-38bdf8) ![Tests](https://img.shields.io/badge/tests-Vitest%20%2B%20Playwright-6da744)
 
 ## Screenshots
 
 Captured automatically in CI by Playwright on every push to `main`
 (see `.github/workflows/e2e.yml`).
 
-| Dark — My Plants | Light — My Plants |
+| Dark (midnight chart) | Light (parchment) |
 | --- | --- |
-| ![Dark theme, My Plants](docs/screenshots/dark-plants-mobile.png) | ![Light theme, My Plants](docs/screenshots/light-plants-mobile.png) |
+| ![Dark theme, mobile](docs/screenshots/mobile-dark.png) | ![Light theme, mobile](docs/screenshots/mobile-light.png) |
 
-| Dark — Add | Dark — History |
-| --- | --- |
-| ![Dark theme, Add](docs/screenshots/dark-add-mobile.png) | ![Dark theme, History](docs/screenshots/dark-history-mobile.png) |
+## About the content
 
-## Features
+The site presents the history in a few parts:
 
-- **My Plants** — every plant with a photo and, per care task, a status badge
-  (due today / overdue / due in N days) and a progress bar. Sorted most-urgent
-  first, with a summary of how many tasks are due.
-- **Multiple care tasks** — track **watering, fertilizing, rotating, and
-  repotting** per plant, each with its own interval and a one-tap "done".
-- **Quick add** built-ins: Pothos, Sansevieria, Bird of Paradise, Monstera.
-- **Type-ahead search** to add any plant — an accessible WAI-ARIA combobox
-  (debounced, keyboard-navigable) backed by the **iNaturalist API**, with photos
-  and common + scientific names. No API key, CORS-friendly → works on static
-  hosting.
-- **Explore** — an artistic plant encyclopedia: a featured gallery plus search,
-  with photos, descriptions, and facts (data from the iNaturalist community).
-  Add anything you discover straight to your plants.
-- **Reminders** — pick weekdays + a time per plant; browser notifications fire
-  while the page is open.
-- **History** — a running, human-friendly log of every care action.
-- **Installable PWA** — add to your home screen and use it **offline** (Workbox
-  service worker via `vite-plugin-pwa`).
-- **Built for low vision / glaucoma** — see below.
+- **The Story** — a short editorial narrative: the bookkeeper, the wreck on
+  Quelpaert (Jeju), the interpreter Jan Janse Weltevree (Park Yeon), and the
+  escape of 1666.
+- **Timeline** — the thirteen-year course from Gorinchem to shipwreck, captivity
+  and return, 1630–1692.
+- **The Kingdom** — the subjects Hamel documented in his "Description of the
+  Kingdom of Korea": the land, the court, law, belief, daily life, trade, war
+  and learning.
+- **Legacy & About** — why the account mattered, with links to sources.
 
-### Accessibility (designed around glaucoma)
+The text is an original, plain-language retelling based on the historical
+record; it summarises Hamel's report rather than reproducing the manuscript
+verbatim. It is offered as an open tribute to and continuation of
+[Henny Savenije's long-running Hendrick Hamel archive](https://www.hendrick-hamel.henny-savenije.pe.kr/),
+which remains the definitive reference for the full translated text and primary
+sources. Hamel's 1668 account is in the public domain.
 
-The UI is tuned for an older user with glaucoma (reduced contrast sensitivity,
-light sensitivity, and peripheral-field / "tunnel" vision):
+## Design
 
-- **Light + dark themes, dark by default** (light text on a dark, off-black
-  canvas). A clearly-labelled toggle switches and remembers the choice.
-- **AAA contrast (≥ 7:1)** for every text/background and button pairing,
-  verified numerically — in both themes.
-- **Atkinson Hyperlegible** font (designed for low vision) at a large 20px
-  baseline, with a 3-step **Normal / Large / Largest** size control.
-- **Halation-aware**: light-on-dark text is kept crisp with large, bold type
-  and an off-black (not pure-black) canvas rather than by dimming contrast.
-- **Tunnel-vision friendly**: a single, centered, narrow column on every screen
-  size; navigation and feedback stay in the central field (toasts appear
-  centered, not at a screen edge).
-- **Status uses colour + icon + word**, never colour alone.
-- **Large touch targets** (≥ 52px) with generous spacing, strong focus rings,
-  `scroll-padding` so the sticky nav never hides the focused element, off-white
-  (not pure-white) light mode to cut glare, and reduced-motion support.
+- **Mobile-first**, responsive from 320px up, with a slim sticky header, a
+  full-screen mobile menu, and a reading-progress bar.
+- **Two themes** — a dark "midnight sea chart" (default) and a light "parchment"
+  theme, remembered in `localStorage` and applied before first paint.
+- **Editorial typography** using Fraunces (display) and Newsreader (body).
+- **Accessible** — semantic landmarks, a skip link, keyboard-focus rings, and
+  full support for `prefers-reduced-motion`.
+- Installable as a **PWA** and works offline after first visit.
 
-All data lives in your browser (`localStorage`); nothing is sent to a server.
+## Tech
 
-## Tech stack
-
-| Concern | Choice |
-| --- | --- |
-| Build / dev | **Vite 7** |
-| UI | **React 19** + **TypeScript** (strict) |
-| Styling | **Tailwind CSS v4** (design tokens via `@theme`) |
-| Tests | **Vitest** + **React Testing Library** (jsdom) |
-| Linting | **ESLint 9** (flat config) + typescript-eslint |
-
-### Architecture
-
-```
-src/
-  lib/         pure logic — watering math, storage, Wikipedia client,
-               notifications, formatting (heavily unit-tested)
-  hooks/       usePlants (state + persistence), useReminders, useTextSize
-  components/  presentational + feature components (ui/ holds primitives)
-  data/        preset plants
-  types.ts     shared domain types
-```
-
-The domain logic is split into small pure functions so it can be tested without
-a DOM, and React components stay thin.
+- **React 19** + **TypeScript** (strict) + **Vite 7**
+- **Tailwind CSS v4**
+- **Vitest** + Testing Library for unit tests; **Playwright** for E2E and
+  screenshots
 
 ## Develop
 
 ```bash
 npm install
 npm run dev        # start the dev server
-npm test           # run the test suite
-npm run lint       # lint
-npm run build      # type-check + production build → dist/
+npm run build      # type-check + production build
+npm test           # unit tests
+npm run e2e        # Playwright E2E + screenshots
+npm run lint
 ```
 
-## Deploy to GitHub Pages
+## Deploy
 
-`.github/workflows/deploy-pages.yml` runs the tests, builds with the correct
-base path (`/plant-water-schedule/`), and deploys on every push to `main`.
-Enable it once under **Settings → Pages → Source: GitHub Actions**. The app
-then lives at `https://<username>.github.io/plant-water-schedule/`.
-
-> The Vite `base` is only applied when the `GITHUB_PAGES` env var is set (done
-> in CI), so local dev still serves from `/`.
-
-## Notes on reminders
-
-Browser notifications fire only while the page is open. Always-on reminders
-would need a Service Worker + Push API and a push server — out of scope for a
-pure static site.
+Pushing to `main` triggers `.github/workflows/deploy-pages.yml`, which runs the
+tests, builds with the GitHub Pages base path, and publishes `dist/` to GitHub
+Pages.
